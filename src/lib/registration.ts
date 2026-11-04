@@ -47,7 +47,9 @@ export const statusLabels = {
 export function toCsv(rows: Record<string, unknown>[], columns: string[]): string {
   const safe = (v: unknown) => {
     const s = v == null ? "" : String(v);
-    const normalized = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+    // Spreadsheet apps can ignore leading whitespace/control chars before formulas.
+    const unsafe = /^[\s\u200B-\u200D\uFEFF]*[=+\-@]/u.test(s) || /^[\t\r\n]/.test(s);
+    const normalized = unsafe ? `'${s}` : s;
     return `"${normalized.replace(/"/g, '""')}"`;
   };
   return "\uFEFF" + [columns.map(safe).join(","), ...rows.map(row => columns.map(c => safe(row[c])).join(","))].join("\r\n");
