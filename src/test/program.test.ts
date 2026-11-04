@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PROGRAM_START_DATE, PROGRAM_DAYS, objectives, outcomes, programDays, programAgenda } from "@/lib/program";
+import { PROGRAM_START_DATE, PROGRAM_DAYS, objectives, outcomes, programDays, programAgenda, experiences } from "@/lib/program";
 
 describe("SUKUK LAB proposal alignment", () => {
   it("uses the approved 8 November start and three consecutive days", () => {
@@ -13,6 +13,11 @@ describe("SUKUK LAB proposal alignment", () => {
     expect(objectives).toHaveLength(5);
     expect(outcomes).toHaveLength(4);
     expect(objectives.at(-1)?.title).toContain("الصناعة");
+  });
+  it("includes Case Study as the third experience card", () => {
+    expect(experiences).toHaveLength(3);
+    expect(experiences[2]?.english).toBe("CASE STUDY");
+    expect(experiences[2]?.title).toBe("دراسة حالة");
   });
   it("includes three day agendas without invented hourly slots", () => {
     expect(programAgenda).toHaveLength(3);
