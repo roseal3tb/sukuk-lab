@@ -1,37 +1,65 @@
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 
-/** Reveal only when entering viewport. Content stays visible if observers or JS are unavailable. */
+/** Each element reveals once. Anything not explicitly pending is always visible. */
 export function useReveal() {
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const elements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
     if (!elements.length) return;
 
-    // Hide before paint so elements below the fold don't flash visible first.
-    document.documentElement.classList.add("sl-motion");
+    const reveal = (element: HTMLElement) => {
+      element.classList.add("is-visible");
+      element.classList.remove("sl-pending");
+    };
+
+    // Elements already on screen are never hidden.
+    const pending = elements.filter((element) => {
+      const rect = element.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 50 || rect.bottom < 0) {
+        reveal(element);
+        return false;
+      }
+      element.classList.add("sl-pending");
+      return true;
+    });
+
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
-        const el = entry.target as HTMLElement;
-        el.classList.add("is-visible");
-        observer.unobserve(el);
+        const element = entry.target as HTMLElement;
+        reveal(element);
+        observer.unobserve(element);
       }
-    }, { threshold: 0.18, rootMargin: "0px 0px -85px 0px" });
+    }, { threshold: 0, rootMargin: "0px 0px 100px 0px" });
 
-    elements.forEach((el) => observer.observe(el));
-    // If observer is blocked or delayed, do not leave the page inaccessible.
-    const rescue = window.setTimeout(() => {
-      elements.forEach((el) => {
-        if (el.getBoundingClientRect().top < window.innerHeight && el.getBoundingClientRect().bottom > 0) {
-          el.classList.add("is-visible");
+    pending.forEach((element) => observer.observe(element));
+    document.documentElement.classList.add("sl-motion");
+
+    // Scroll/resize fallback also handles tall cards and unusual observer timing.
+    const check = () => {
+      for (const element of pending) {
+        if (!element.classList.contains("sl-pending")) continue;
+        const rect = element.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 100) {
+          reveal(element);
+          observer.unobserve(element);
         }
-      });
-    }, 3000);
+      }
+    };
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    check();
+    // Absolute safety net: no section remains hidden after 5 seconds.
+    const rescue = window.setTimeout(() => pending.forEach(reveal), 5000);
+
     return () => {
       window.clearTimeout(rescue);
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
       observer.disconnect();
+      elements.forEach((element) => element.classList.remove("sl-pending"));
       document.documentElement.classList.remove("sl-motion");
     };
   }, []);

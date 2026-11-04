@@ -1211,3 +1211,17 @@ html.sl-motion .reveal {
     opacity: 1 !important; transform: none !important; transition: none !important;
   }
 }
+
+/* Safe one-time reveal: only explicitly queued items may be hidden.
+   Never hide all .reveal elements globally. */
+html.sl-motion .reveal:not(.is-visible),
+html.sl-motion .reveal.sl-pending:not(.is-visible) { opacity: 1 !important; transform: none !important; }
+html.sl-motion .reveal.sl-pending:not(.is-visible) {
+  opacity: 0 !important;
+  transform: translate3d(0, 38px, 0) !important;
+}
+html.sl-motion .reveal.is-visible { opacity: 1 !important; transform: none !important; }
+html.sl-motion .reveal { transition-duration: .75s !important; }
+@media (prefers-reduced-motion: reduce) {
+ html.sl-motion .reveal.sl-pending:not(.is-visible) { opacity: 1 !important; transform: none !important; }
+}
