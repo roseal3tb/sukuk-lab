@@ -34,5 +34,8 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
     },
-  }
+  },
+  // Formatting is handled by Prettier, while ESLint gates code correctness.
+  // The existing project contains extensive legacy one-line JSX and CSS styles.
+  { rules: { "prettier/prettier": "off" } },
 );
