@@ -85,6 +85,22 @@ jobs:
           path: screenshots/
           if-no-files-found: warn
           retention-days: 30
+      - name: Create changed-files ZIP
+        if: always()
+        run: |
+          zip -q SUKUK-LAB-modified-files.zip \
+            public/hero/sukuk-certificate.svg \
+            src/routes/index.tsx \
+            src/lib/program.ts \
+            src/styles.css \
+            src/test/program.test.ts
+      - name: Upload changed-files ZIP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUKUK-LAB-modified-files
+          path: SUKUK-LAB-modified-files.zip
+          retention-days: 30
       - name: Create full source ZIP
         if: always()
         run: |
