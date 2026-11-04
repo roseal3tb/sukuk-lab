@@ -1421,3 +1421,77 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
 .sl-data-notice p { font-size: 14px; line-height: 1.9; margin: 12px 0 0; }
 .sl-form-decisions fieldset:focus-visible,
 .sl-form-consent input:focus-visible { outline: 2px solid #8d6a25; outline-offset: 3px; }
+
+
+/* Partner layout: identical caption and logo rows on all cards.
+   The Financial Academy logo is a near-square asset; avoid centering each
+   caption+image group independently, which misaligned the headings. */
+.sl-logo-grid > .sl-logo-card {
+  display: grid !important;
+  grid-template-rows: 42px 192px;
+  align-items: stretch !important;
+  justify-items: center !important;
+  align-content: start !important;
+  gap: 8px !important;
+  min-height: 260px !important;
+  padding: 8px !important;
+}
+.sl-logo-grid > .sl-logo-card > span {
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+  line-height: 1.6;
+  white-space: normal;
+}
+.sl-logo-grid > .sl-logo-card > img {
+  display: block;
+  align-self: center;
+  justify-self: center;
+  object-fit: contain;
+  object-position: center;
+  width: 210px !important;
+  height: 150px !important;
+  max-width: 100% !important;
+  max-height: 150px !important;
+}
+.sl-logo-grid > .sl-logo-card:nth-child(2) > img {
+  width: 210px !important;
+  height: 145px !important;
+  max-width: 210px !important;
+  max-height: 145px !important;
+}
+.sl-logo-grid > .sl-logo-card:nth-child(3) > img {
+  width: 215px !important;
+  height: 192px !important;
+  max-width: 215px !important;
+  max-height: 192px !important;
+}
+@media (max-width: 920px) {
+  .sl-logo-grid > .sl-logo-card {
+    grid-template-rows: 36px 170px;
+    min-height: 226px !important;
+    gap: 4px !important;
+  }
+  .sl-logo-grid > .sl-logo-card:nth-child(3) > img {
+    width: 190px !important;
+    height: 170px !important;
+    max-width: 190px !important;
+    max-height: 170px !important;
+  }
+}
+@media (max-width: 600px) {
+  .sl-logo-grid > .sl-logo-card {
+    grid-template-rows: 36px 142px;
+    min-height: 194px !important;
+  }
+  .sl-logo-grid > .sl-logo-card > img {
+    height: 120px !important;
+    max-height: 120px !important;
+  }
+  .sl-logo-grid > .sl-logo-card:nth-child(3) > img {
+    width: 175px !important;
+    height: 142px !important;
+    max-width: 175px !important;
+    max-height: 142px !important;
+  }
+}
