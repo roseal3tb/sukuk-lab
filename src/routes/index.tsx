@@ -157,7 +157,7 @@ function Timeline() {
                 <header className="sl-journey__date">
                   <span>{item.day}</span>
                   <span>
-                    {programDays[index].weekday} · {programDays[index].short}
+                    {programDays[index]?.weekday ?? ''} · {programDays[index]?.short ?? ''}
                   </span>
                 </header>
                 <div className="sl-journey__content">
