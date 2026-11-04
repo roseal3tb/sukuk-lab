@@ -91,6 +91,7 @@ jobs:
           zip -q SUKUK-LAB-modified-files.zip \
             public/hero/sukuk-certificate.svg \
             src/routes/index.tsx \
+            src/components/site/SiteHeader.tsx \
             src/lib/program.ts \
             src/styles.css \
             src/test/program.test.ts
