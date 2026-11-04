@@ -14,6 +14,12 @@ type Application = {
   phone: string;
   university: string;
   major: string;
+  study_year: string | null;
+  sukuk_knowledge: string | null;
+  motivation: string | null;
+  learning_goal: string | null;
+  ithmar_member: boolean | null;
+  can_attend_all_days: boolean | null;
   status: AppStatus;
   created_at: string;
 };
@@ -95,6 +101,15 @@ function AdminGate({ userId }: { userId: string }) {
 function Dashboard() {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<AppStatus | "all">("all");
+  const [selected, setSelected] = useState<Application | null>(null);
+  useEffect(() => {
+    if (!selected) return;
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", dismiss);
+    return () => window.removeEventListener("keydown", dismiss);
+  }, [selected]);
   const settings = useQuery({
     queryKey: ["admin-settings"],
     queryFn: async () => {
@@ -106,7 +121,7 @@ function Dashboard() {
   const apps = useQuery({
     queryKey: ["admin-applications"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("applications").select("id,full_name,email,phone,university,major,status,created_at").order("created_at", { ascending: true });
+      const { data, error } = await supabase.from("applications").select("id,full_name,email,phone,university,major,study_year,sukuk_knowledge,motivation,learning_goal,ithmar_member,can_attend_all_days,status,created_at").order("created_at", { ascending: true });
       if (error) throw error;
       return (data ?? []) as Application[];
     },
@@ -140,8 +155,13 @@ function Dashboard() {
   const visible = filter === "all" ? rows : rows.filter(row => row.status === filter);
   function exportCsv() {
     if (!visible.length) return;
-    const content = toCsv(visible.map(row => ({ ...row, status: statusLabels[row.status] })),
-      ["full_name", "email", "phone", "university", "major", "status", "created_at"]);
+    const content = toCsv(visible.map(row => ({
+      ...row,
+      status: statusLabels[row.status],
+      ithmar_member: row.ithmar_member == null ? "" : row.ithmar_member ? "نعم" : "لا",
+      can_attend_all_days: row.can_attend_all_days == null ? "" : row.can_attend_all_days ? "نعم" : "لا",
+    })),
+      ["full_name", "email", "phone", "university", "major", "study_year", "sukuk_knowledge", "motivation", "learning_goal", "ithmar_member", "can_attend_all_days", "status", "created_at"]);
     const file = new Blob([content], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(file);
     const link = document.createElement("a"); link.href = url; link.download = "sukuk-lab-applications.csv"; link.click();
@@ -185,7 +205,7 @@ function Dashboard() {
         </button>)}</div>
       {apps.isError ? <p role="alert">تعذّر تحميل الطلبات.</p> : apps.isLoading ? <p>جارٍ تحميل الطلبات…</p> : !visible.length ? <p className="rounded-xl border p-8 text-center">لا توجد طلبات.</p> :
         <div className="overflow-x-auto rounded-xl border"><table className="w-full min-w-[900px] text-right text-sm">
-          <thead className="bg-card"><tr>{["الاسم", "البريد", "الهاتف", "الجامعة", "التخصص", "التاريخ", "الحالة"].map(h => <th key={h} className="p-4">{h}</th>)}</tr></thead>
+          <thead className="bg-card"><tr>{["الاسم", "البريد", "الهاتف", "الجامعة", "التخصص", "التاريخ", "الحالة", "الإجابات"].map(h => <th key={h} className="p-4">{h}</th>)}</tr></thead>
           <tbody>{visible.map(row => <tr key={row.id} className="border-t">
             <td className="p-4">{row.full_name}</td><td className="p-4" dir="ltr">{row.email}</td><td className="p-4" dir="ltr">{row.phone}</td>
             <td className="p-4">{row.university}</td><td className="p-4">{row.major}</td><td className="p-4">{new Date(row.created_at).toLocaleDateString("ar-SA-u-ca-gregory")}</td>
@@ -193,7 +213,33 @@ function Dashboard() {
               onChange={e => updateStatus.mutate({ id: row.id, status: e.target.value as AppStatus })}>
               {(Object.keys(statusLabels) as AppStatus[]).map(s => <option value={s} key={s}>{statusLabels[s]}</option>)}
             </select></td>
+            <td className="p-4"><button type="button" className="rounded-full border border-gold px-3 py-2 text-gold" onClick={() => setSelected(row)}>عرض التفاصيل</button></td>
           </tr>)}</tbody></table></div>}
     </section>
+    {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setSelected(null); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="app-detail-title" className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gold/30 bg-card p-6 text-foreground shadow-2xl">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <h2 id="app-detail-title" className="text-xl font-bold">تفاصيل طلب {selected.full_name}</h2>
+          <button autoFocus type="button" className="rounded-full border border-gold px-4 py-2 text-gold" onClick={() => setSelected(null)}>إغلاق</button>
+        </div>
+        <dl className="grid gap-4">
+          {([
+            ["الاسم", selected.full_name],
+            ["البريد الإلكتروني", selected.email],
+            ["رقم الجوال", selected.phone],
+            ["الجامعة", selected.university],
+            ["التخصص", selected.major],
+            ["السنة الدراسية", selected.study_year ?? "—"],
+            ["المعرفة الحالية بالصكوك", selected.sukuk_knowledge ?? "—"],
+            ["سبب الرغبة في الانضمام", selected.motivation ?? "—"],
+            ["ما يرغب في تعلمه", selected.learning_goal ?? "—"],
+            ["هل هو من فريق إثمار", selected.ithmar_member == null ? "—" : selected.ithmar_member ? "نعم" : "لا"],
+            ["القدرة على حضور جميع الأيام", selected.can_attend_all_days == null ? "—" : selected.can_attend_all_days ? "نعم" : "لا"],
+          ] as [string, string][]).map(([label, value]) => (
+            <div className="border-b border-gold/15 pb-3" key={label}><dt className="mb-1 text-xs text-muted-foreground">{label}</dt><dd className="whitespace-pre-wrap break-words text-sm leading-7">{value}</dd></div>
+          ))}
+        </dl>
+      </section>
+    </div>}
   </div>;
 }
