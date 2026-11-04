@@ -1,0 +1,54 @@
+name: SUKUK LAB Review and Full ZIP
+on:
+  push:
+    branches:
+      - review/premium-final-20261104
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'supabase/**'
+      - 'drizzle/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-package:
+    name: Build, test and package
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout GitHub source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.23
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build complete application
+        run: bun run build
+      - name: TypeScript validation
+        run: bunx tsc --noEmit
+      - name: Unit tests
+        run: bun run test
+      - name: Lint
+        run: bun run lint
+      - name: Create full source ZIP
+        if: always()
+        run: |
+          zip -qr SUKUK-LAB-complete.zip . \
+            -x '.git/*' 'node_modules/*' '.output/*' 'dist/*' '.nitro/*' '.vinxi/*' '.tanstack/*' '*.log'
+      - name: Upload complete project ZIP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUKUK-LAB-complete
+          path: SUKUK-LAB-complete.zip
+          retention-days: 30
