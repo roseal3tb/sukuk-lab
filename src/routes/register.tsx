@@ -48,7 +48,7 @@ function RegisterPage() {
     const parsed = registrationSchema.safeParse({
       full_name: fd.get("full_name"),
       email: fd.get("email"),
-      phone: String(fd.get("phone") ?? "").replace(/[\s()\-]/g, ""),
+      phone: String(fd.get("phone") ?? "").replace(/[\s()-]/g, ""),
       university: fd.get("university"),
       major: fd.get("major"),
       study_year: fd.get("study_year"),
@@ -67,7 +67,8 @@ function RegisterPage() {
       }
       setErrors(issues);
       setServerError(null);
-      window.requestAnimationFrame(() => document.getElementById(String(parsed.error.issues[0].path[0]))?.focus());
+      const firstIssue = parsed.error.issues[0];
+      if (firstIssue) window.requestAnimationFrame(() => document.getElementById(String(firstIssue.path[0]))?.focus());
       return;
     }
     setErrors({});
@@ -168,28 +169,28 @@ function RegisterPage() {
               <section className="sl-form-section" aria-labelledby="sec-commitment">
                 <header className="sl-form-section__head"><span>03</span><div><h2 id="sec-commitment">الانضمام والالتزام</h2><p>خطوتان أخيرتان قبل إرسال طلبك</p></div></header>
                 <div className="sl-form-decisions">
-                  <fieldset id="ithmar_member" aria-describedby={errors.ithmar_member ? "ithmar_member-err" : undefined}>
+                  <fieldset id="ithmar_member" aria-describedby={errors['ithmar_member'] ? "ithmar_member-err" : undefined}>
                     <legend>هل أنت من فريق إثمار؟ <span aria-hidden="true">*</span></legend>
                     <div className="sl-form-options">
                       <label><input type="radio" name="ithmar_member" value="yes"/> نعم</label>
                       <label><input type="radio" name="ithmar_member" value="no"/> لا</label>
                     </div>
-                    {errors.ithmar_member && <small id="ithmar_member-err" role="alert">{errors.ithmar_member}</small>}
+                    {errors['ithmar_member'] && <small id="ithmar_member-err" role="alert">{errors['ithmar_member']}</small>}
                   </fieldset>
-                  <fieldset id="can_attend_all_days" aria-describedby={errors.can_attend_all_days ? "can_attend_all_days-err" : undefined}>
+                  <fieldset id="can_attend_all_days" aria-describedby={errors['can_attend_all_days'] ? "can_attend_all_days-err" : undefined}>
                     <legend>هل يمكنك الالتزام بحضور أيام البرنامج كاملة؟ <span aria-hidden="true">*</span></legend>
                     <div className="sl-form-options">
                       <label><input type="radio" name="can_attend_all_days" value="yes"/> نعم</label>
                       <label><input type="radio" name="can_attend_all_days" value="no"/> لا</label>
                     </div>
-                    {errors.can_attend_all_days && <small id="can_attend_all_days-err" role="alert">{errors.can_attend_all_days}</small>}
+                    {errors['can_attend_all_days'] && <small id="can_attend_all_days-err" role="alert">{errors['can_attend_all_days']}</small>}
                   </fieldset>
                 </div>
                 <label className="sl-form-consent" htmlFor="consent">
-                  <input id="consent" name="consent" type="checkbox" aria-invalid={!!errors.consent}/>
+                  <input id="consent" name="consent" type="checkbox" aria-invalid={!!errors['consent']}/>
                   <span>أوافق على معالجة بياناتي لأغراض التسجيل والتواصل بشأن البرنامج</span>
                 </label>
-                {errors.consent && <small className="sl-form-consent-error" role="alert">{errors.consent}</small>}
+                {errors['consent'] && <small className="sl-form-consent-error" role="alert">{errors['consent']}</small>}
               </section>
 
               {serverError && <div className="sl-register-notice sl-register-notice--error" role="alert">{serverError}</div>}

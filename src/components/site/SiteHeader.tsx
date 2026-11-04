@@ -1,15 +1,14 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowUpLeft, Mail, Menu, Phone, X } from "lucide-react";
-import { CONTACT_EMAIL, CONTACT_PHONE } from "@/lib/program";
+import { ArrowUpLeft, Menu, X } from "lucide-react";
 
 const nav = [
   { id: "about", label: "عن البرنامج" },
   { id: "experience", label: "التجربة" },
   { id: "timeline", label: "الرحلة" },
   { id: "goals", label: "الأهداف" },
-  { id: "partners", label: "الشركاء" },
-  { id: "contact", label: "التواصل" },
+  { id: "outcomes", label: "المخرجات" },
+  { id: "audience", label: "الفئة المستهدفة" },
 ];
 
 export function SiteHeader() {
@@ -127,18 +126,8 @@ export function SiteFooter() {
           <Link to="/register">التسجيل</Link>
         </nav>
         <div className="sl-footer__right reveal">
-          <h3>تواصل معنا</h3>
-          <p>نسعد بالإجابة عن استفساراتك</p>
-          <div className="sl-footer__contact-list">
-            <a href={`mailto:${CONTACT_EMAIL}`}>
-              <Mail size={18} />
-              <span dir="ltr">{CONTACT_EMAIL}</span>
-            </a>
-            <a href={`tel:${CONTACT_PHONE.replace(/\s+/g, "")}`}>
-              <Phone size={18} />
-              <span dir="ltr">{CONTACT_PHONE}</span>
-            </a>
-          </div>
+          <h3>عن إثمار</h3>
+          <p>مبادرة إثمار هي أول مبادرة طلابية مالية في جامعة الملك سعود، تابعة لبرنامج الشراكة الطلابية، وتهدف إلى زيادة الوعي المالي وتنمية المهارات المالية لدى المستفيدين.</p>
         </div>
       </div>
       <div className="sl-wrap sl-footer__bottom">
