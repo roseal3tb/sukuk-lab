@@ -85,11 +85,11 @@ export function SiteHeader() {
 
       <nav id="sl-mobile-menu" aria-label="قائمة الهاتف" className={`sl-mobile-menu ${open ? "is-open" : ""}`} aria-hidden={!open}>
         {nav.map((item, i) => (
-          <a key={item.id} href={`/#${item.id}`} onClick={() => setOpen(false)} style={{ animationDelay: `${i * 55}ms` }}>
+          <a key={item.id} href={`/#${item.id}`} tabIndex={open ? 0 : -1} onClick={() => setOpen(false)} style={{ animationDelay: `${i * 55}ms` }}>
             {item.label}
           </a>
         ))}
-        <Link to="/register" onClick={() => setOpen(false)}>
+        <Link to="/register" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>
           سجّل الآن <ArrowUpLeft size={18} />
         </Link>
       </nav>
