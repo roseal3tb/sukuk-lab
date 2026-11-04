@@ -10,7 +10,9 @@ export const CONTACT_EMAIL = "ethmar.spp@gmail.com";
 export const CONTACT_PHONE = "+966 55 820 0444";
 
 function dayDate(index: number) {
-  const [year, month, day] = PROGRAM_START_DATE.split("-").map(Number);
+  const year = Number(PROGRAM_START_DATE.slice(0, 4));
+  const month = Number(PROGRAM_START_DATE.slice(5, 7));
+  const day = Number(PROGRAM_START_DATE.slice(8, 10));
   return new Date(Date.UTC(year, month - 1, day + index, 12));
 }
 
@@ -62,7 +64,7 @@ export const programAgenda = [
     title: "كيف نقيّم الصك",
     description: "ورشة تطبيقية تقرّب الأرقام من القرار",
     points: [
-      "ورشة القسيمة والاستحقاق والعائد والمخاطر",
+      "ورشة حسابية: القسيمة وتاريخ الاستحقاق والعائد حتى الاستحقاق وعوامل المخاطر",
       "تمرين جماعي لتقييم صك متداول في السوق السعودي",
       "تسليم دراسة الحالة للفرق",
     ],
@@ -74,9 +76,9 @@ export const programAgenda = [
     title: "من الفكرة إلى الإصدار",
     description: "فهم الهيكلة ثم عرض الحلول أمام اللجنة",
     points: [
-      "ورشة هيكلة الإصدار وأدوار الأطراف ذات العلاقة",
-      "عروض الفرق أمام اللجنة",
-      "تكريم الفائزين وتسليم الشهادات",
+      "ورشة هيكلة الإصدار وأدوار البنك المستشار وهيئة السوق المالية والمكتتبين",
+      "عروض الفرق أمام لجنة التحكيم لمدة 3–5 دقائق",
+      "تكريم الفريق الفائز وتسليم الشهادات والكلمة الختامية",
     ],
   },
 ];
