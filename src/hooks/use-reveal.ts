@@ -1,18 +1,26 @@
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 /**
- * One-time, flicker-free scroll entrance for SUKUK LAB.
- * Content remains visible even if animations fail.
+ * SUKUK LAB scroll reveal:
+ * - Content stays visible without JavaScript.
+ * - Only elements below the viewport start hidden.
+ * - Each element reveals once.
+ * - Hover transforms remain independent.
  */
 export function useReveal() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       typeof window === "undefined" ||
       !("IntersectionObserver" in window)
     ) {
       return;
     }
+
+    const root = document.documentElement;
+
+    // Disable the previous conflicting animation system.
+    root.classList.remove("sl-motion");
 
     if (
       window.matchMedia(
@@ -26,6 +34,31 @@ export function useReveal() {
       document.querySelectorAll<HTMLElement>(".reveal")
     );
 
+    if (!elements.length) return;
+
+    const pending: HTMLElement[] = [];
+
+    // Prepare offscreen elements before enabling CSS animations.
+    for (const element of elements) {
+      element.classList.remove("sl-pending");
+
+      const bounds = element.getBoundingClientRect();
+
+      if (
+        bounds.top > window.innerHeight + 16 &&
+        !element.classList.contains("is-visible")
+      ) {
+        element.classList.add("sl-pending");
+        pending.push(element);
+      } else {
+        element.classList.add("is-visible");
+      }
+    }
+
+    if (!pending.length) return;
+
+    root.classList.add("sl-reveal-ready");
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -35,74 +68,28 @@ export function useReveal() {
 
           observer.unobserve(element);
 
-          if (element.dataset.slAnimated === "true") {
-            continue;
-          }
-
-          element.dataset.slAnimated = "true";
-
-          if (typeof element.animate !== "function") {
-            continue;
-          }
-
-          const isCard = element.matches(
-            ".sl-experience-card, " +
-            ".sl-goals-card, " +
-            ".sl-logo-card, " +
-            ".sl-journey__day"
-          );
-
-          try {
-            element.animate(
-              [
-                {
-                  opacity: 1,
-                  transform: `translate3d(0, ${
-                    isCard ? 18 : 12
-                  }px, 0)`,
-                },
-                {
-                  opacity: 1,
-                  transform: "translate3d(0, 0, 0)",
-                },
-              ],
-              {
-                duration: isCard ? 560 : 470,
-                delay: 0,
-                easing:
-                  "cubic-bezier(.22, 1, .36, 1)",
-                fill: "none",
-              }
-            );
-          } catch {
-            // Keep content visible if animation fails.
-          }
+          // Reveal once and keep visible.
+          element.classList.add("is-visible");
+          element.classList.remove("sl-pending");
         }
       },
       {
         threshold: 0.08,
-        rootMargin: "0px 0px -8% 0px",
+        rootMargin: "0px 0px -5% 0px",
       }
     );
 
-    for (const element of elements) {
-      if (element.dataset.slAnimated === "true") {
-        continue;
-      }
+    pending.forEach((element) => {
+      observer.observe(element);
+    });
 
-      const rect = element.getBoundingClientRect();
+    return () => {
+      observer.disconnect();
+      root.classList.remove("sl-reveal-ready");
 
-      if (
-        (rect.top < window.innerHeight &&
-          rect.bottom > 0) ||
-        rect.bottom <= 0
-      ) {
-        element.dataset.slAnimated = "true";
-      } else {
-        observer.observe(element);
-      }
-    }
-
-    return () => observer.disconnect();
+      pending.forEach((element) => {
+        element.classList.remove("sl-pending");
+      });
+    };
   }, []);
 }
