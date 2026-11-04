@@ -7,7 +7,6 @@ import { useReveal } from "@/hooks/use-reveal";
 import {
   experiences,
   outcomes,
-  caseStudy,
   firstProgramDay,
   objectives,
   programAgenda,
@@ -259,7 +258,7 @@ function Index() {
                 صكوك لاب هو برنامج تطبيقي مكثف تنظمه مبادرة إثمار المالية بجامعة الملك سعود، يهدف إلى تمكين الطلاب والطالبات من فهم الصكوك وأدوات الدين، وتطوير مهاراتهم في تقييم الصكوك وفهم آليات هيكلة الإصدارات المالية
               </p>
               <p className="reveal">
-                يمتد البرنامج على مدى ثلاثة أيام، من خلال جلسات حوارية مع خبراء القطاع المالي، وورش عمل تطبيقية، ودراسة حالة واقعية تتيح للمشاركين تحويل المعرفة النظرية إلى تجربة عملية تحاكي سوق العمل
+                يمتد البرنامج على مدى ثلاثة أيام، من خلال جلسات حوارية مع خبراء القطاع المالي، وورش عمل تطبيقية تساعد المشاركين على ربط المعرفة النظرية بواقع سوق الصكوك
               </p>
               <p className="reveal">
                 إثمار هي أول مبادرة طلابية مالية بجامعة الملك سعود، تابعة لبرنامج الشراكة الطلابية، وتهدف إلى رفع الوعي المالي وتنمية المهارات المالية لدى المستفيدين.
@@ -313,24 +312,6 @@ function Index() {
           </div>
         </section>
 
-
-        <section className="sl-case sl-ivory" id="case-study" aria-labelledby="case-heading">
-          <div className="sl-wrap sl-case__layout">
-            <div className="reveal">
-              <p className="sl-kicker"><span className="sl-kicker__dash" />دراسة الحالة</p>
-              <h2 id="case-heading">{caseStudy.title}</h2>
-              <p>{caseStudy.summary}</p>
-            </div>
-            <div className="sl-case__deliverables reveal">
-              <span className="sl-case__label">ما المطلوب من كل فريق؟</span>
-              <ol>
-                {caseStudy.deliverables.map((item, index) => (
-                  <li key={item}><span>0{index + 1}</span>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        </section>
 
         <Timeline />
 

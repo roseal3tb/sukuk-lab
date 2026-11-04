@@ -122,6 +122,8 @@ export function SiteFooter() {
           <a href="/#experience">التجربة</a>
           <a href="/#timeline">الرحلة</a>
           <a href="/#goals">الأهداف</a>
+          <a href="/#outcomes">المخرجات</a>
+          <a href="/#audience">الفئة المستهدفة</a>
           <a href="/#partners">الشركاء</a>
           <Link to="/register">التسجيل</Link>
         </nav>

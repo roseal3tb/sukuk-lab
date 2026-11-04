@@ -1,6 +1,6 @@
 <svg width="760" height="700" viewBox="0 0 760 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-<title id="title">تصوير فني للصكوك</title>
-<desc id="desc">شهادة صكوك شفافة متراكبة بإطارات ذهبية رفيعة مع حلقة هندسية هادئة</desc>
+<title id="title">شهادة صكوك تحمل شعار مختبر الصكوك</title>
+<desc id="desc">شهادة بتفاصيل ذهبية هادئة، يتوسطها رمز مختبر الصكوك الذهبي دون كتابة</desc>
 <defs>
  <linearGradient id="orbit" x1="-10" y1="250" x2="740" y2="330" gradientUnits="userSpaceOnUse"><stop stop-color="#C9A24A" stop-opacity=".03"/><stop offset=".35" stop-color="#D5AE68" stop-opacity=".42"/><stop offset=".7" stop-color="#C9A24A" stop-opacity=".20"/><stop offset="1" stop-color="#C9A24A" stop-opacity=".01"/></linearGradient>
  <linearGradient id="paper" x1="242" y1="118" x2="541" y2="603" gradientUnits="userSpaceOnUse"><stop stop-color="#5B4B37" stop-opacity=".66"/><stop offset=".37" stop-color="#382F28" stop-opacity=".78"/><stop offset="1" stop-color="#181818" stop-opacity=".96"/></linearGradient>
@@ -31,10 +31,13 @@
  <path d="M235 207C268 207 291 188 310 160C330 188 355 193 377 199C405 190 431 170 450 160C467 188 490 207 519 207" stroke="#C9A24A" stroke-opacity=".57" stroke-width="1.4"/>
  <path d="M235 155H285M475 155H519" stroke="#C9A24A" stroke-opacity=".3"/>
  <rect x="235" y="137" width="285" height="54" fill="url(#grille)" opacity=".12"/>
- <text x="377" y="302" text-anchor="middle" direction="rtl" xml:lang="ar"
-  font-family="Noto Naskh Arabic, Amiri, Tahoma, Arial, sans-serif" font-size="56"
-  font-weight="600" fill="#E6C989" letter-spacing="0">صكوك</text>
- <text x="378" y="343" font-family="Georgia, serif" font-size="21" letter-spacing="5" text-anchor="middle" fill="#CEAC70">SUKUK</text>
+ <!-- Official Sukuk Lab abstract mark, without any Arabic or English lettering. -->
+ <g fill="#C9A24A" aria-hidden="true">
+   <path d="M319 346L346 340L346 259L319 269Z"/>
+   <path d="M360 336L384 330L384 282L360 290Z"/>
+   <path d="M398 326L418 322L418 304L398 309Z"/>
+   <path d="M315 362L426 337L426 349L315 374Z"/>
+ </g>
  <path d="M290 375H465" stroke="#D9BA83" stroke-opacity=".5" stroke-width="1"/>
  <path d="M336 404H420M304 428H448M323 451H429" stroke="#C9A24A" stroke-opacity=".27" stroke-width="1.6" stroke-linecap="round"/>
  <circle cx="378" cy="510" r="20" stroke="#C9A24A" stroke-opacity=".55"/>
