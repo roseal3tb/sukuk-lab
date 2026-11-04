@@ -12,7 +12,7 @@ describe("SUKUK LAB proposal alignment", () => {
   it("includes all five objectives and four outcomes", () => {
     expect(objectives).toHaveLength(5);
     expect(outcomes).toHaveLength(4);
-    expect(objectives[4].title).toContain("الصناعة");
+    expect(objectives.at(-1)?.title).toContain("الصناعة");
   });
   it("includes three day agendas without invented hourly slots", () => {
     expect(programAgenda).toHaveLength(3);
