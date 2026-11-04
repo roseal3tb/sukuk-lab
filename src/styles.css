@@ -1333,14 +1333,22 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
   .sl-orbit--sukuk img { animation: none !important; transform: none !important; }
 }
 
-/* Two uncluttered experience cards after removing case-study content. */
-.sl-experience__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 980px; margin-inline: auto; }
+/* Three aligned experience cards, Case Study remains a card—not a section. */
+.sl-experience__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1180px;
+  margin-inline: auto;
+  gap: 20px;
+}
 .sl-experience-card { min-height: 310px; }
-@media (max-width: 850px) {
-  .sl-experience__grid { grid-template-columns: 1fr 1fr; }
-  .sl-experience-card:last-child { grid-column: auto; min-height: 310px; }
+@media (max-width: 850px) and (min-width: 601px) {
+  .sl-experience__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sl-experience-card:last-child { grid-column: 1 / -1; min-height: 310px; }
 }
 @media (max-width: 600px) {
   .sl-experience__grid { grid-template-columns: 1fr; }
-  .sl-experience-card { min-height: 270px; }
+  .sl-experience-card, .sl-experience-card:last-child {
+    grid-column: auto;
+    min-height: 270px;
+  }
 }
