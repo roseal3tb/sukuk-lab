@@ -1,40 +1,43 @@
 import { useEffect } from "react";
+import "@/styles-improvements.css";
 
-/**
- * Progressive enhancement only: content is visible without JS or IntersectionObserver.
- * Animate once, subtly, as each element enters view; never hide cards while scrolling.
- */
+/** Animate each section once on entry, without hiding content if JS is unavailable. */
 export function useReveal() {
   useEffect(() => {
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const items = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    const elements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    if (!elements.length) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
           const element = entry.target as HTMLElement;
-          if (element.dataset.revealed === "true") continue;
-          element.dataset.revealed = "true";
+          element.classList.add("is-visible");
           observer.unobserve(element);
-
-          // Both keyframes are clearly visible. No dependency on the animation
-          // completing for the element to be readable/clickable.
-          if (typeof element.animate === "function") {
-            element.animate(
-              [
-                { opacity: 0.94, transform: "translateY(10px)" },
-                { opacity: 1, transform: "translateY(0)" },
-              ],
-              { duration: 490, easing: "cubic-bezier(.22,1,.36,1)", fill: "none" },
-            );
-          }
-        }
+        });
       },
-      { threshold: 0.04, rootMargin: "0px 0px 12% 0px" },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
     );
-    items.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+
+    elements.forEach((element) => observer.observe(element));
+    document.documentElement.classList.add("sl-motion");
+
+    // Reveal anything already on screen; never leave content hidden after an observer issue.
+    const fallback = window.setTimeout(() => {
+      elements.forEach((element) => {
+        if (element.getBoundingClientRect().top < window.innerHeight) {
+          element.classList.add("is-visible");
+        }
+      });
+    }, 1800);
+
+    return () => {
+      window.clearTimeout(fallback);
+      observer.disconnect();
+      document.documentElement.classList.remove("sl-motion");
+    };
   }, []);
 }

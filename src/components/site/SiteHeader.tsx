@@ -101,33 +101,39 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="sl-footer" id="contact">
-      <div className="sl-wrap sl-footer__top">
-        <div>
+      <div className="sl-wrap sl-footer__top sl-footer__grid">
+        <div className="sl-footer__identity">
           <p className="sl-kicker">SUKUK LAB · ITHMAR</p>
-          <h2>
-            جاهزون للرد على
-            <br />
-            <em>استفساراتك</em>
-          </h2>
-        </div>
-
-        <div className="sl-footer__right">
-          <p>SUKUK LAB | صكوك لاب</p>
+          <h2>صكوك <em>لاب</em></h2>
           <p>من الصفر إلى الإصدار</p>
+          <p>برنامج تطبيقي مكثف تنظمه مبادرة إثمار المالية بجامعة الملك سعود.</p>
+        </div>
+        <nav className="sl-footer__links" aria-label="روابط سريعة">
+          <h3>روابط سريعة</h3>
+          <a href="/#about">عن البرنامج</a>
+          <a href="/#experience">التجربة</a>
+          <a href="/#timeline">الرحلة</a>
+          <a href="/#goals">الأهداف</a>
+          <a href="/#partners">الشركاء</a>
+          <Link to="/register">التسجيل</Link>
+        </nav>
+        <div className="sl-footer__right">
+          <h3>تواصل معنا</h3>
+          <p>يسعدنا الرد على استفساراتك</p>
           <div className="sl-footer__contact-list">
             <a href={`mailto:${CONTACT_EMAIL}`}>
-              <Mail size={16} />
+              <Mail size={17} />
               <span dir="ltr">{CONTACT_EMAIL}</span>
             </a>
             <a href={`tel:${CONTACT_PHONE.replace(/\s+/g, "")}`}>
-              <Phone size={16} />
+              <Phone size={17} />
               <span dir="ltr">{CONTACT_PHONE}</span>
             </a>
           </div>
         </div>
       </div>
       <div className="sl-wrap sl-footer__bottom">
-        <span>© SUKUK LAB</span>
+        <span>© {new Date().getFullYear()} SUKUK LAB · مبادرة إثمار المالية</span>
         <span>من الصفر إلى الإصدار</span>
       </div>
     </footer>

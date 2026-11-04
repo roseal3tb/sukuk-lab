@@ -1092,3 +1092,66 @@ html.sl-motion .reveal.is-visible {
   .sl-orbit svg, .sl-title-line > span { animation: none !important; }
   .sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover { transform: none; }
 }
+
+/* SUKUK LAB — footer and scroll-motion refinements.
+   Imported by use-reveal.ts; the existing styles.css remains unchanged. */
+
+/* Contact information belongs only in the footer, not in the final CTA. */
+.sl-final-cta .sl-contact-cards { display: none !important; }
+
+/* Reference-inspired three-column footer, retaining SUKUK LAB colors. */
+.sl-footer .sl-footer__top.sl-footer__grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, .75fr) minmax(0, 1fr) !important;
+  gap: clamp(30px, 5vw, 85px);
+  align-items: start;
+  padding-block: 75px 80px;
+}
+.sl-footer__identity h2 { margin: 16px 0 14px; font-size: clamp(32px, 3.2vw, 45px); }
+.sl-footer__identity > p:not(.sl-kicker) { max-width: 360px; margin: 8px 0; color: #bdb7a8; font-size: 14px; line-height: 2; }
+.sl-footer__links { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
+.sl-footer__links h3, .sl-footer__right h3 { color: #f6f4ee; font-size: 20px; font-weight: 600; margin: 0 0 13px; }
+.sl-footer__links a { color: #bdb7a8; font-size: 14px; transition: color .25s ease, translate .25s ease; }
+.sl-footer__links a:hover { color: #c9a24a; translate: -4px 0; }
+.sl-footer .sl-footer__right { align-self: start; text-align: start; }
+.sl-footer__right > p { color: #bdb7a8; font-size: 14px; line-height: 1.8; margin: 0 0 22px; }
+.sl-footer__contact-list { gap: 17px; }
+.sl-footer__contact-list a { display: inline-flex; direction: ltr; justify-content: flex-end; gap: 12px; white-space: nowrap; font-family: var(--font-latin); }
+.sl-footer__contact-list a svg { flex-shrink: 0; color: #c9a24a; }
+
+/* Visible by default; only hide when the observer has mounted. */
+html.sl-motion .reveal:not(.is-visible) {
+  opacity: 0 !important;
+  transform: translate3d(0, 55px, 0) scale(.985) !important;
+}
+html.sl-motion .reveal.is-visible {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+}
+html.sl-motion .reveal {
+  transition: opacity .85s cubic-bezier(.22, 1, .36, 1), transform .85s cubic-bezier(.22, 1, .36, 1) !important;
+}
+/* Stagger cards on reveal; preserve hover transforms after entry. */
+html.sl-motion .sl-experience-card.reveal:nth-child(2),
+html.sl-motion .sl-goals-card.reveal:nth-child(3n + 2),
+html.sl-motion .sl-logo-card.reveal:nth-child(2) { transition-delay: 120ms !important; }
+html.sl-motion .sl-experience-card.reveal:nth-child(3),
+html.sl-motion .sl-goals-card.reveal:nth-child(3n),
+html.sl-motion .sl-logo-card.reveal:nth-child(3) { transition-delay: 240ms !important; }
+.sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover { box-shadow: 0 25px 55px #00000020; }
+
+@media (max-width: 850px) {
+  .sl-footer .sl-footer__top.sl-footer__grid { grid-template-columns: 1fr 1fr !important; gap: 40px 24px; }
+  .sl-footer__identity { grid-column: 1 / -1; }
+  .sl-footer__contact-list a { white-space: normal; }
+}
+@media (max-width: 540px) {
+  .sl-footer .sl-footer__top.sl-footer__grid { grid-template-columns: 1fr !important; padding-block: 55px 60px; }
+  .sl-footer__identity { grid-column: auto; }
+  .sl-footer__bottom { gap: 12px; flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.sl-motion .reveal, html.sl-motion .reveal:not(.is-visible), html.sl-motion .reveal.is-visible {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+}
