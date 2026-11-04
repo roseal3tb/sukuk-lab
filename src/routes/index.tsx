@@ -6,6 +6,8 @@ import { useRegistrationStatus } from "@/hooks/use-registration-status";
 import { useReveal } from "@/hooks/use-reveal";
 import {
   experiences,
+  outcomes,
+  caseStudy,
   firstProgramDay,
   objectives,
   programAgenda,
@@ -58,26 +60,18 @@ function ScrollProgress() {
 }
 
 function HeroGraphic() {
+  // Deliberately replace only the former orbit drawing; all existing hero copy
+  // and CTA positioning stay the same.
   return (
-    <div className="sl-orbit" aria-hidden="true">
-      <svg viewBox="0 0 620 620" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="orbGrad" x1="0" x2="1" y1="0" y2="1">
-            <stop stopColor="#C9A24A" stopOpacity=".03" />
-            <stop offset=".46" stopColor="#C9A24A" stopOpacity=".5" />
-            <stop offset="1" stopColor="#C9A24A" stopOpacity=".07" />
-          </linearGradient>
-        </defs>
-        {[270, 222, 175, 126].map((r, i) => (
-          <circle key={r} cx="310" cy="310" r={r} stroke="url(#orbGrad)" strokeWidth="1" strokeDasharray={i === 1 ? "2 8" : "none"} />
-        ))}
-        <path className="sl-orbit__path" d="M68 403 C142 366 170 415 237 336 S335 219 401 287 S491 313 550 206" stroke="#C9A24A" strokeWidth="2" fill="none" />
-        <path d="M68 403 V442 M237 336 V442 M401 287 V442 M550 206 V442" stroke="#C9A24A" strokeOpacity=".14" strokeDasharray="3 8" fill="none" />
-        {[68, 237, 401, 550].map((x, i) => (
-          <circle key={i} cx={x} cy={[403, 336, 287, 206][i]} r="5" fill="#C9A24A" />
-        ))}
-      </svg>
-
+    <div className="sl-orbit sl-orbit--sukuk" aria-hidden="true">
+      <img
+        src="/hero/sukuk-certificate.svg"
+        alt=""
+        width={760}
+        height={700}
+        fetchPriority="high"
+        decoding="async"
+      />
     </div>
   );
 }
@@ -87,11 +81,13 @@ function SectionHeading({
   title,
   description,
   dark = false,
+  id,
 }: {
   label: string;
   title: string;
   description?: string;
   dark?: boolean;
+  id?: string;
 }) {
   return (
     <div className={`sl-section-heading reveal ${dark ? "sl-section-heading--dark" : ""}`}>
@@ -99,7 +95,7 @@ function SectionHeading({
         <span className="sl-kicker__dash" />
         {label}
       </p>
-      <h2>{title}</h2>
+      <h2 id={id}>{title}</h2>
       {description && <p className="sl-section-heading__desc">{description}</p>}
     </div>
   );
@@ -146,6 +142,7 @@ function Timeline() {
       <div className="sl-wrap">
         <SectionHeading
           dark
+          id="timeline-heading"
           label="الرحلة"
           title="من الفهم إلى الإصدار"
         />
@@ -264,6 +261,9 @@ function Index() {
               <p className="reveal">
                 يمتد البرنامج على مدى ثلاثة أيام، من خلال جلسات حوارية مع خبراء القطاع المالي، وورش عمل تطبيقية، ودراسة حالة واقعية تتيح للمشاركين تحويل المعرفة النظرية إلى تجربة عملية تحاكي سوق العمل
               </p>
+              <p className="reveal">
+                إثمار هي أول مبادرة طلابية مالية بجامعة الملك سعود، تابعة لبرنامج الشراكة الطلابية، وتهدف إلى رفع الوعي المالي وتنمية المهارات المالية لدى المستفيدين.
+              </p>
               <p className="sl-about__goal reveal">
                 <strong>هدفنا</strong>
                 <span>بناء جيل يمتلك المعرفة والمهارات اللازمة لفهم أدوات الدين والمساهمة في تطوير القطاع المالي في المملكة</span>
@@ -313,6 +313,25 @@ function Index() {
           </div>
         </section>
 
+
+        <section className="sl-case sl-ivory" id="case-study" aria-labelledby="case-heading">
+          <div className="sl-wrap sl-case__layout">
+            <div className="reveal">
+              <p className="sl-kicker"><span className="sl-kicker__dash" />دراسة الحالة</p>
+              <h2 id="case-heading">{caseStudy.title}</h2>
+              <p>{caseStudy.summary}</p>
+            </div>
+            <div className="sl-case__deliverables reveal">
+              <span className="sl-case__label">ما المطلوب من كل فريق؟</span>
+              <ol>
+                {caseStudy.deliverables.map((item, index) => (
+                  <li key={item}><span>0{index + 1}</span>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+
         <Timeline />
 
         <section className="sl-goals sl-ivory" id="goals">
@@ -333,12 +352,28 @@ function Index() {
           </div>
         </section>
 
+
+        <section className="sl-outcomes sl-dark" id="outcomes" aria-labelledby="outcomes-heading">
+          <div className="sl-wrap">
+            <SectionHeading dark id="outcomes-heading" label="المخرجات" title="بماذا تخرج بعد ثلاثة أيام؟" />
+            <div className="sl-outcomes__grid">
+              {outcomes.map((item) => (
+                <article className="sl-outcome reveal" key={item.number}>
+                  <span>{item.number}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.detail}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
         <section className="sl-audience sl-dark" id="audience">
           <div className="sl-wrap sl-audience__shell">
             <SectionHeading
               dark
               label="الفئة المستهدفة"
               title="للمهتمين بأسواق الدين"
+              description="المشاركة متاحة للمهتمين من مختلف التخصصات والجامعات، ولا تُشترط خلفية مسبقة."
             />
             <div className="sl-tags">
               {[
