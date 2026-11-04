@@ -1333,14 +1333,69 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
   .sl-orbit--sukuk img { animation: none !important; transform: none !important; }
 }
 
-/* Two uncluttered experience cards after removing case-study content. */
-.sl-experience__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 980px; margin-inline: auto; }
+/* Three aligned experience cards, Case Study remains a card—not a section. */
+.sl-experience__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1180px;
+  margin-inline: auto;
+  gap: 20px;
+}
 .sl-experience-card { min-height: 310px; }
-@media (max-width: 850px) {
-  .sl-experience__grid { grid-template-columns: 1fr 1fr; }
-  .sl-experience-card:last-child { grid-column: auto; min-height: 310px; }
+@media (max-width: 850px) and (min-width: 601px) {
+  .sl-experience__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sl-experience-card:last-child { grid-column: 1 / -1; min-height: 310px; }
 }
 @media (max-width: 600px) {
   .sl-experience__grid { grid-template-columns: 1fr; }
-  .sl-experience-card { min-height: 270px; }
+  .sl-experience-card, .sl-experience-card:last-child {
+    grid-column: auto;
+    min-height: 270px;
+  }
+}
+
+
+/* Footer refinement: a slightly wider layout with quick links in two columns. */
+.sl-footer .sl-wrap {
+  max-width: 1370px;
+  padding-inline: clamp(24px, 4vw, 60px);
+}
+.sl-footer .sl-footer__top.sl-footer__grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.05fr) minmax(0, 1fr) !important;
+  gap: clamp(30px, 4vw, 64px);
+}
+.sl-footer__links {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  justify-content: start;
+  align-content: start;
+  align-items: start;
+  column-gap: clamp(16px, 1.5vw, 22px);
+  row-gap: 15px;
+  width: fit-content;
+  max-width: 100%;
+}
+.sl-footer__links h3 {
+  grid-column: 1 / -1;
+  margin-bottom: 11px;
+}
+.sl-footer__links a {
+  display: inline-block;
+  width: fit-content;
+  line-height: 1.75;
+}
+@media (max-width: 920px) {
+  .sl-footer .sl-footer__top.sl-footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 38px 28px;
+  }
+}
+@media (max-width: 600px) {
+  .sl-footer .sl-footer__top.sl-footer__grid {
+    grid-template-columns: 1fr !important;
+  }
+  .sl-footer__links {
+    grid-template-columns: max-content max-content;
+    column-gap: 16px;
+    row-gap: 12px;
+  }
 }

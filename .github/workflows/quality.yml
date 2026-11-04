@@ -1,0 +1,116 @@
+name: SUKUK LAB Review and Full ZIP
+on:
+  push:
+    branches:
+      - review/premium-final-20261104
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'supabase/**'
+      - 'drizzle/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-package:
+    name: Build, test and package
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout GitHub source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.23
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build complete application
+        run: bun run build
+      - name: TypeScript validation
+        run: bunx tsc --noEmit
+      - name: Unit tests
+        run: bun run test
+      - name: Lint
+        run: bun run lint
+      - name: Screenshot actual running website
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p screenshots
+          browser="$(command -v google-chrome || command -v chromium || true)"
+          if [ -z "$browser" ]; then
+            echo "Chrome not installed on runner; visual artifact unavailable."
+            exit 0
+          fi
+          bun run dev --host 127.0.0.1 --port 4173 > /tmp/sukuk-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 35); do
+            if curl -fsS http://127.0.0.1:4173/ -o /dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:4173/ -o /dev/null || {
+            cat /tmp/sukuk-preview.log
+            exit 1
+          }
+          "$browser" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --virtual-time-budget=3000 --window-size=1440,960 \
+            --screenshot="$PWD/screenshots/desktop-hero.png" \
+            http://127.0.0.1:4173/
+          "$browser" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --virtual-time-budget=3000 --window-size=390,844 \
+            --screenshot="$PWD/screenshots/mobile-hero.png" \
+            http://127.0.0.1:4173/
+          "$browser" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --virtual-time-budget=5000 --window-size=1440,7500 \
+            --screenshot="$PWD/screenshots/desktop-full.png" \
+            http://127.0.0.1:4173/
+          "$browser" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --virtual-time-budget=5000 --window-size=390,7200 \
+            --screenshot="$PWD/screenshots/mobile-full.png" \
+            http://127.0.0.1:4173/
+      - name: Upload visual screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUKUK-LAB-visual-preview
+          path: screenshots/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Create changed-files ZIP
+        if: always()
+        run: |
+          zip -q SUKUK-LAB-modified-files.zip \
+            public/hero/sukuk-certificate.svg \
+            src/routes/index.tsx \
+            src/components/site/SiteHeader.tsx \
+            src/lib/program.ts \
+            src/styles.css \
+            src/test/program.test.ts
+      - name: Upload changed-files ZIP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUKUK-LAB-modified-files
+          path: SUKUK-LAB-modified-files.zip
+          retention-days: 30
+      - name: Create full source ZIP
+        if: always()
+        run: |
+          zip -qr SUKUK-LAB-complete.zip . \
+            -x '.git/*' 'node_modules/*' '.output/*' 'dist/*' '.nitro/*' '.vinxi/*' '.tanstack/*' '*.log'
+      - name: Upload complete project ZIP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUKUK-LAB-complete
+          path: SUKUK-LAB-complete.zip
+          retention-days: 30
