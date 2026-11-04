@@ -40,6 +40,43 @@ jobs:
         run: bun run test
       - name: Lint
         run: bun run lint
+      - name: Screenshot actual running website
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p screenshots
+          browser="$(command -v google-chrome || command -v chromium || true)"
+          if [ -z "$browser" ]; then
+            echo "Chrome not installed on runner; visual artifact unavailable."
+            exit 0
+          fi
+          bun run dev --host 127.0.0.1 --port 4173 > /tmp/sukuk-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 35); do
+            if curl -fsS http://127.0.0.1:4173/ -o /dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:4173/ -o /dev/null || {
+            cat /tmp/sukuk-preview.log
+            exit 1
+          }
+          "$browser" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --virtual-time-budget=3000 --window-size=1440,960 \
+            --screenshot="$PWD/screenshots/desktop-hero.png" \
+            http://127.0.0.1:4173/
+          "$browser" --headless --no-sandbox --disable-gpu --hide-scrollbars \
+            --virtual-time-budget=3000 --window-size=390,844 \
+            --screenshot="$PWD/screenshots/mobile-hero.png" \
+            http://127.0.0.1:4173/
+      - name: Upload visual screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SUKUK-LAB-visual-preview
+          path: screenshots/
+          if-no-files-found: warn
+          retention-days: 30
       - name: Create full source ZIP
         if: always()
         run: |
