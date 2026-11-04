@@ -6,8 +6,6 @@ export const PROGRAM_START_DATE = "2026-11-08";
 export const PROGRAM_DAYS = 3;
 export const PROGRAM_CITY = "الرياض";
 export const TARGET_PARTICIPANTS = 100;
-export const CONTACT_EMAIL = "ethmar.spp@gmail.com";
-export const CONTACT_PHONE = "+966 55 820 0444";
 
 function dayDate(index: number) {
   const year = Number(PROGRAM_START_DATE.slice(0, 4));
@@ -52,7 +50,7 @@ export const programAgenda = [
     title: "السياق والانطلاقة",
     description: "مدخل واضح لأدوات الدين وسوق الصكوك السعودي",
     points: [
-      "مقدمة في أدوات الدين والصكوك والسندات والمرابحة",
+      "مقدمة في الدخل الثابت وأدوات الدين: الصكوك والسندات والمرابحة",
       "جلسة حوارية عن واقع سوق الصكوك السعودي ورؤية 2030",
       "نقاش مفتوح وتكوين الفرق",
     ],
