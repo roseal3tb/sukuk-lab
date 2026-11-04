@@ -1,12 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { ArrowDown, ArrowLeft, ArrowUpLeft, Mail, Phone } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUpLeft } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteHeader";
 import { useRegistrationStatus } from "@/hooks/use-registration-status";
 import { useReveal } from "@/hooks/use-reveal";
 import {
-  CONTACT_EMAIL,
-  CONTACT_PHONE,
   experiences,
   firstProgramDay,
   objectives,
@@ -282,7 +280,7 @@ function Index() {
             />
             <div className="sl-experience__grid">
               {experiences.map((item, i) => (
-                <article className={`sl-experience-card sl-experience-card--${i + 1} reveal`} key={item.number} style={{ transitionDelay: `${i * 95}ms` }}>
+                <article className={`sl-experience-card sl-experience-card--${i + 1} reveal`} key={item.number} style={{ "--sl-reveal-delay": `${i * 170}ms` } as CSSProperties}>
                   <div className="sl-experience-card__top">
                     <span>{item.english}</span>
                   </div>
@@ -325,7 +323,7 @@ function Index() {
             />
             <div className="sl-goals-cards">
               {objectives.map((objective, index) => (
-                <article key={objective.title} className="sl-goals-card reveal" style={{ transitionDelay: `${index * 70}ms` }}>
+                <article key={objective.title} className="sl-goals-card reveal" style={{ "--sl-reveal-delay": `${index * 115}ms` } as CSSProperties}>
                   <span className="sl-goals-card__index">0{index + 1}</span>
                   <h3>{objective.title}</h3>
                   <p>{objective.body}</p>
@@ -366,15 +364,15 @@ function Index() {
               title="شركاء الرحلة"
             />
             <div className="sl-logo-grid">
-              <article className="sl-logo-card reveal">
+              <article className="sl-logo-card reveal" style={{ "--sl-reveal-delay": "0ms" } as CSSProperties}>
                 <span>الجهة المنظمة · إثمار</span>
                 <img src="/logos/ethmar.png" alt="شعار إثمار" loading="lazy" />
               </article>
-              <article className="sl-logo-card reveal">
+              <article className="sl-logo-card reveal" style={{ "--sl-reveal-delay": "170ms" } as CSSProperties}>
                 <span>الراعي الرئيسي · Sukuk Capital</span>
                 <img src="/logos/sukuk-capital.png" alt="شعار Sukuk Capital" loading="lazy" />
               </article>
-              <article className="sl-logo-card reveal">
+              <article className="sl-logo-card reveal" style={{ "--sl-reveal-delay": "340ms" } as CSSProperties}>
                 <span>الشريك المستضيف · الأكاديمية المالية</span>
                 <img src="/logos/financial-academy.png" alt="شعار الأكاديمية المالية" loading="lazy" />
               </article>
@@ -400,16 +398,6 @@ function Index() {
                 <span>{isOpen ? "سجّل الآن" : "انتقل للتسجيل"}</span>
                 <ArrowUpLeft size={23} />
               </Link>
-              <div className="sl-contact-cards">
-                <a href={`mailto:${CONTACT_EMAIL}`} className="sl-contact-card">
-                  <Mail size={18} />
-                  <span dir="ltr">{CONTACT_EMAIL}</span>
-                </a>
-                <a href={`tel:${CONTACT_PHONE.replace(/\s+/g, "")}`} className="sl-contact-card">
-                  <Phone size={18} />
-                  <span dir="ltr">{CONTACT_PHONE}</span>
-                </a>
-              </div>
             </div>
 
             {registration.isError && (

@@ -1155,3 +1155,59 @@ html.sl-motion .sl-logo-card.reveal:nth-child(3) { transition-delay: 240ms !impo
     opacity: 1 !important; transform: none !important; transition: none !important;
   }
 }
+
+
+/* FINAL PARTNER AND SCROLL REFINEMENTS — consolidated in styles.css */
+.sl-partners { padding-block: clamp(65px, 8vw, 100px); }
+.sl-logo-grid { gap: 22px; align-items: stretch; }
+.sl-logo-card {
+  min-height: 195px; padding: 26px 22px 23px; gap: 18px;
+  background: transparent !important; border: 1px solid #d7d0c1;
+  box-shadow: none; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: border-color .4s ease, box-shadow .5s ease, translate .5s ease;
+}
+.sl-logo-card span {
+  display: block; text-align: center; font-size: clamp(13px, 1.2vw, 15px);
+  font-weight: 700; line-height: 1.85; color: #534630;
+}
+.sl-logo-card img {
+  display: block; width: auto !important; height: auto !important;
+  max-width: min(100%, 165px) !important; max-height: 67px !important;
+  object-fit: contain; object-position: center;
+}
+.sl-logo-card:nth-child(2) img { max-width: 172px !important; max-height: 70px !important; }
+.sl-logo-card:nth-child(3) img { max-width: 112px !important; max-height: 70px !important; }
+.sl-logo-card:hover { translate: 0 -6px; box-shadow: 0 20px 45px #18120a12; border-color: #c9a24a; }
+/* CSS only hides once the JS observer explicitly enables motion. */
+html.sl-motion .reveal:not(.is-visible) {
+  opacity: 0 !important;
+  transform: translate3d(0, 76px, 0) scale(.955) !important;
+  visibility: visible !important;
+}
+html.sl-motion .reveal.is-visible {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+  visibility: visible !important;
+}
+html.sl-motion .reveal {
+  transition-property: opacity, transform !important;
+  transition-duration: 1.15s, 1.15s !important;
+  transition-timing-function: cubic-bezier(.22, 1, .36, 1) !important;
+  transition-delay: var(--sl-reveal-delay, 0ms) !important;
+  will-change: opacity, transform;
+}
+/* The transform belongs to reveal during entrance; hover uses translate to avoid conflict. */
+.sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover {
+  translate: 0 -7px;
+  box-shadow: 0 25px 52px #0000001b;
+}
+@media (max-width: 720px) {
+  .sl-logo-card { min-height: 165px; padding: 22px 18px; }
+  .sl-logo-card img { max-height: 62px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.sl-motion .reveal, html.sl-motion .reveal:not(.is-visible), html.sl-motion .reveal.is-visible {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+}
