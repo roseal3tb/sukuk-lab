@@ -1365,11 +1365,14 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
 }
 .sl-footer__links {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: max-content max-content;
+  justify-content: start;
   align-content: start;
   align-items: start;
-  column-gap: clamp(16px, 2.2vw, 32px);
+  column-gap: clamp(16px, 1.5vw, 22px);
   row-gap: 15px;
+  width: fit-content;
+  max-width: 100%;
 }
 .sl-footer__links h3 {
   grid-column: 1 / -1;
@@ -1391,8 +1394,8 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
     grid-template-columns: 1fr !important;
   }
   .sl-footer__links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 22px;
+    grid-template-columns: max-content max-content;
+    column-gap: 16px;
     row-gap: 12px;
   }
 }
