@@ -48,7 +48,7 @@ function RegisterPage() {
     const parsed = registrationSchema.safeParse({
       full_name: fd.get("full_name"),
       email: fd.get("email"),
-      phone: String(fd.get("phone") ?? "").replace(/[\s()\-]/g, ""),
+      phone: String(fd.get("phone") ?? "").replace(/[\s()-]/g, ""),
       university: fd.get("university"),
       major: fd.get("major"),
       study_year: fd.get("study_year"),
