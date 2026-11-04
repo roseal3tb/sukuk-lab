@@ -146,7 +146,7 @@ function Dashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-applications"] }),
     onError: () => toast.error("تعذّر تحديث حالة الطلب"),
   });
-  const rows = apps.data ?? [];
+  const rows = useMemo(() => apps.data ?? [], [apps.data]);
   const counts = useMemo(() => {
     const result = { pending: 0, accepted: 0, rejected: 0, waitlisted: 0 };
     for (const row of rows) result[row.status]++;
