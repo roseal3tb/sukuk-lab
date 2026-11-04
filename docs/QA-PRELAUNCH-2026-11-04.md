@@ -43,6 +43,8 @@
 - Closed mobile menu links now leave keyboard tab order.
 - Source-controlled `.env` includes project URL and publishable/anon-style keys only per key-name audit; no service-role key name was detected. Still avoid putting any secret credentials in Vite-prefixed variables.
 - Missing spam/bot/rate-limit protection for the public RPC: **release blocker** if open to broad audiences.
+- **Admin status transitions:** direct admin updates can manually change a waitlisted record to `accepted` without rechecking capacity in the database. Before release, add a server-side guard or document a manual admission procedure with a capacity check.
+- CSV formula escaping now detects whitespace-prefixed formula strings and has a regression test.
 - SQL migration source is reviewed; no destructive/production data writes were performed in this QA pass.
 
 ## UI/visual audit
