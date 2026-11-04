@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - review/premium-final-20261104
+      - qa/prelaunch-hardening-20261104
+      - main
   pull_request:
     paths:
       - 'src/**'
