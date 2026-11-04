@@ -37,7 +37,7 @@ const errors: Record<string,string> = {
 export function translateServerError(message: string | undefined) {
   if (!message) return "تعذّر حفظ الطلب، حاول مرة أخرى";
   const code = Object.keys(errors).find((key) => message.includes(key));
-  return code ? errors[code] : "تعذّر حفظ الطلب، تأكد من إعداد قاعدة البيانات ثم حاول مجددًا";
+  return (code ? errors[code] : undefined) ?? "تعذّر حفظ الطلب، تأكد من إعداد قاعدة البيانات ثم حاول مجددًا";
 }
 export const statusLabels = {
   pending: "قيد المراجعة", accepted: "مقبول", waitlisted: "قائمة الانتظار", rejected: "مرفوض",
