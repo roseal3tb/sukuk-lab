@@ -65,9 +65,14 @@ function Login() {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true); setErrorText("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setErrorText("تعذّر تسجيل الدخول. تأكد من البريد وكلمة المرور.");
-    setBusy(false);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setErrorText("تعذّر تسجيل الدخول. تأكد من البريد وكلمة المرور.");
+    } catch {
+      setErrorText("تعذّر الاتصال بخدمة الدخول. حاول مرة أخرى.");
+    } finally {
+      setBusy(false);
+    }
   }
   return <form onSubmit={submit} className="mx-auto max-w-md space-y-5 rounded-xl border bg-card p-8">
     <h1 className="text-2xl font-bold">دخول مدير التسجيل</h1>
@@ -121,9 +126,23 @@ function Dashboard() {
   const apps = useQuery({
     queryKey: ["admin-applications"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("applications").select("id,full_name,email,phone,university,major,study_year,sukuk_knowledge,motivation,learning_goal,ithmar_member,can_attend_all_days,status,created_at").order("created_at", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as Application[];
+      // PostgREST defaults to a maximum of 1000 rows per response.
+      const pageSize = 1000;
+      const all: Application[] = [];
+      let offset = 0;
+      while (true) {
+        const { data, error } = await supabase.from("applications")
+          .select("id,full_name,email,phone,university,major,study_year,sukuk_knowledge,motivation,learning_goal,ithmar_member,can_attend_all_days,status,created_at")
+          .order("created_at", { ascending: true })
+          .order("id", { ascending: true })
+          .range(offset, offset + pageSize - 1);
+        if (error) throw error;
+        const batch = (data ?? []) as Application[];
+        all.push(...batch);
+        if (batch.length < pageSize) break;
+        offset += pageSize;
+      }
+      return all;
     },
   });
   const updateSettings = useMutation({
@@ -165,7 +184,7 @@ function Dashboard() {
     const file = new Blob([content], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(file);
     const link = document.createElement("a"); link.href = url; link.download = "sukuk-lab-applications.csv"; link.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return <div className="space-y-10">
     <h1 className="text-3xl font-bold">لوحة إدارة المتقدمين</h1>

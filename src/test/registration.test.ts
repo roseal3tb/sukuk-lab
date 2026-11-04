@@ -25,6 +25,10 @@ describe("registration validation", () => {
   it("rejects incomplete three-part names", () => {
     expect(registrationSchema.safeParse({ ...valid, full_name: "سارة محمد" }).success).toBe(false);
   });
+  it("escapes whitespace-prefixed spreadsheet formula cells", () => {
+    const csv = toCsv([{ full_name: " =SUM(1,1)" }], ["full_name"]);
+    expect(csv).toContain("' =SUM(1,1)");
+  });
   it("escapes CSV formula prefixes", () => {
     const csv = toCsv([{ full_name: "=HYPERLINK(\"bad\")" }], ["full_name"]);
     expect(csv).toContain("'=HYPERLINK");

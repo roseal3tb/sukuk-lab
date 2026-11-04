@@ -1399,3 +1399,17 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
     row-gap: 12px;
   }
 }
+
+/* QA: accessible registration disclosure, without changing the selected hero. */
+.sl-data-notice {
+  margin: 20px 0 16px;
+  color: #4a463c;
+  background: #f8f4ec;
+  border: 1px solid #e0d4bb;
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+.sl-data-notice summary { font-weight: 600; color: #57441c; cursor: pointer; }
+.sl-data-notice p { font-size: 14px; line-height: 1.9; margin: 12px 0 0; }
+.sl-form-decisions fieldset:focus-visible,
+.sl-form-consent input:focus-visible { outline: 2px solid #8d6a25; outline-offset: 3px; }

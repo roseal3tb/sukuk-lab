@@ -126,6 +126,12 @@ function RegisterPage() {
           {status.data && !status.data.is_open && !result && <div className="sl-register-notice" role="status">
             <h2>التسجيل غير متاح حاليًا</h2><p>سيظهر النموذج فور فتح التسجيل من قبل الجهة المنظمة</p>
           </div>}
+          {status.data?.is_open && status.data.full && !status.data.waitlist_enabled && !result && (
+            <div className="sl-register-notice" role="status">
+              <h2>اكتمل العدد المتاح</h2>
+              <p>التسجيل وقائمة الانتظار غير متاحين حاليًا.</p>
+            </div>
+          )}
           {result && <div className="sl-register-success" role="status">
             <CheckCircle2 size={42} aria-hidden="true" />
             <h2>تم استلام طلبك بنجاح</h2>
@@ -133,7 +139,7 @@ function RegisterPage() {
             <Link to="/" className="sl-button sl-button--gold">العودة للبرنامج <ArrowUpLeft size={18}/></Link>
           </div>}
 
-          {status.data?.is_open && !result && (
+          {status.data?.is_open && (!status.data.full || status.data.waitlist_enabled) && !result && (
             <form className="sl-register-form" onSubmit={submit} noValidate>
               {status.data.full && <p className="sl-register-waitlist" role="status">{status.data.waitlist_enabled ? "اكتمل العدد المستهدف، وسيُضاف طلبك إلى قائمة الانتظار" : "اكتمل العدد المتاح، لا يمكن استقبال طلبات جديدة"}</p>}
 
@@ -169,7 +175,7 @@ function RegisterPage() {
               <section className="sl-form-section" aria-labelledby="sec-commitment">
                 <header className="sl-form-section__head"><span>03</span><div><h2 id="sec-commitment">الانضمام والالتزام</h2><p>خطوتان أخيرتان قبل إرسال طلبك</p></div></header>
                 <div className="sl-form-decisions">
-                  <fieldset id="ithmar_member" aria-describedby={errors['ithmar_member'] ? "ithmar_member-err" : undefined}>
+                  <fieldset id="ithmar_member" tabIndex={-1} aria-describedby={errors['ithmar_member'] ? "ithmar_member-err" : undefined}>
                     <legend>هل أنت من فريق إثمار؟ <span aria-hidden="true">*</span></legend>
                     <div className="sl-form-options">
                       <label><input type="radio" name="ithmar_member" value="yes"/> نعم</label>
@@ -177,7 +183,7 @@ function RegisterPage() {
                     </div>
                     {errors['ithmar_member'] && <small id="ithmar_member-err" role="alert">{errors['ithmar_member']}</small>}
                   </fieldset>
-                  <fieldset id="can_attend_all_days" aria-describedby={errors['can_attend_all_days'] ? "can_attend_all_days-err" : undefined}>
+                  <fieldset id="can_attend_all_days" tabIndex={-1} aria-describedby={errors['can_attend_all_days'] ? "can_attend_all_days-err" : undefined}>
                     <legend>هل يمكنك الالتزام بحضور أيام البرنامج كاملة؟ <span aria-hidden="true">*</span></legend>
                     <div className="sl-form-options">
                       <label><input type="radio" name="can_attend_all_days" value="yes"/> نعم</label>
@@ -187,13 +193,17 @@ function RegisterPage() {
                   </fieldset>
                 </div>
                 <label className="sl-form-consent" htmlFor="consent">
-                  <input id="consent" name="consent" type="checkbox" aria-invalid={!!errors['consent']}/>
+                  <input id="consent" name="consent" type="checkbox" aria-invalid={!!errors['consent']} aria-describedby={errors['consent'] ? "consent-err" : undefined} required/>
                   <span>أوافق على معالجة بياناتي لأغراض التسجيل والتواصل بشأن البرنامج</span>
                 </label>
-                {errors['consent'] && <small className="sl-form-consent-error" role="alert">{errors['consent']}</small>}
+                {errors['consent'] && <small id="consent-err" className="sl-form-consent-error" role="alert">{errors['consent']}</small>}
               </section>
 
               {serverError && <div className="sl-register-notice sl-register-notice--error" role="alert">{serverError}</div>}
+              <details className="sl-data-notice">
+                <summary>كيف تُستخدم بيانات التسجيل؟</summary>
+                <p>تُستخدم بيانات التواصل والدراسة وإجابات الاهتمام بالبرنامج لمراجعة طلبات الانضمام والتواصل بشأن المشاركة. تقديم الطلب لا يعني القبول النهائي. للاطلاع على بيانات طلبك أو طلب تعديلها، تواصل مع الجهة المنظمة عبر قنواتها الرسمية.</p>
+              </details>
               <div className="sl-register-submit-row">
                 <p><ShieldCheck size={18} aria-hidden="true"/> بياناتك لا تظهر للزوار ويطّلع عليها فريق الإدارة المخوّل فقط</p>
                 <button className="sl-button sl-button--gold sl-register-submit" type="submit" disabled={busy || (status.data.full && !status.data.waitlist_enabled)}>

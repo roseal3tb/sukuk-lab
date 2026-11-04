@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** Form matches the supplied original sign-up questions */
+/** Registration fields: confirm all additional questions with the event organizer before launch. */
 export const registrationSchema = z.object({
   full_name: z.string().trim().min(5, "أدخل الاسم الثلاثي").max(120, "الاسم طويل جدًا").refine(v => v.split(/\s+/).length >= 3, "يرجى إدخال الاسم الثلاثي"),
   email: z.string().trim().email("أدخل بريدًا إلكترونيًا صحيحًا").max(255),
@@ -47,7 +47,9 @@ export const statusLabels = {
 export function toCsv(rows: Record<string, unknown>[], columns: string[]): string {
   const safe = (v: unknown) => {
     const s = v == null ? "" : String(v);
-    const normalized = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+    // Spreadsheet apps can ignore leading whitespace/control chars before formulas.
+    const unsafe = /^[\s\u200B-\u200D\uFEFF]*[=+\-@]/u.test(s) || /^[\t\r\n]/.test(s);
+    const normalized = unsafe ? `'${s}` : s;
     return `"${normalized.replace(/"/g, '""')}"`;
   };
   return "\uFEFF" + [columns.map(safe).join(","), ...rows.map(row => columns.map(c => safe(row[c])).join(","))].join("\r\n");

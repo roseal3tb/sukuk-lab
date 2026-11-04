@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - review/premium-final-20261104
+      - qa/prelaunch-hardening-20261104
+      - main
   pull_request:
     branches:
       - main
@@ -25,3 +27,7 @@ jobs:
         run: bun run test
       - name: Build
         run: bun run build
+      - name: TypeScript validation
+        run: bunx tsc --noEmit
+      - name: ESLint
+        run: bun run lint
