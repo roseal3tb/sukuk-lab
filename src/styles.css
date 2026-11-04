@@ -1370,3 +1370,4 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
 @media (prefers-reduced-motion: reduce) {
   .sl-orbit--sukuk img { animation: none !important; transform: none !important; }
 }
+
