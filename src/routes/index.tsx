@@ -257,14 +257,14 @@ function Index() {
               </h2>
               <span className="sl-about__underscore" />
             </div>
-            <div className="sl-about__story reveal">
-              <p className="sl-about__big">
+            <div className="sl-about__story">
+              <p className="sl-about__big reveal">
                 صكوك لاب هو برنامج تطبيقي مكثف تنظمه مبادرة إثمار المالية بجامعة الملك سعود، يهدف إلى تمكين الطلاب والطالبات من فهم الصكوك وأدوات الدين، وتطوير مهاراتهم في تقييم الصكوك وفهم آليات هيكلة الإصدارات المالية
               </p>
-              <p>
+              <p className="reveal">
                 يمتد البرنامج على مدى ثلاثة أيام، من خلال جلسات حوارية مع خبراء القطاع المالي، وورش عمل تطبيقية، ودراسة حالة واقعية تتيح للمشاركين تحويل المعرفة النظرية إلى تجربة عملية تحاكي سوق العمل
               </p>
-              <p className="sl-about__goal">
+              <p className="sl-about__goal reveal">
                 <strong>هدفنا</strong>
                 <span>بناء جيل يمتلك المعرفة والمهارات اللازمة لفهم أدوات الدين والمساهمة في تطوير القطاع المالي في المملكة</span>
               </p>
@@ -280,7 +280,7 @@ function Index() {
             />
             <div className="sl-experience__grid">
               {experiences.map((item, i) => (
-                <article className={`sl-experience-card sl-experience-card--${i + 1} reveal`} key={item.number} style={{ "--sl-reveal-delay": `${i * 170}ms` } as CSSProperties}>
+                <article className={`sl-experience-card sl-experience-card--${i + 1} reveal`} key={item.number}>
                   <div className="sl-experience-card__top">
                     <span>{item.english}</span>
                   </div>
@@ -322,8 +322,8 @@ function Index() {
               title="ماذا ستتعلم"
             />
             <div className="sl-goals-cards">
-              {objectives.map((objective, index) => (
-                <article key={objective.title} className="sl-goals-card reveal" style={{ "--sl-reveal-delay": `${index * 115}ms` } as CSSProperties}>
+              {objectives.map((objective) => (
+                <article key={objective.title} className="sl-goals-card reveal">
                   <span className="sl-goals-card__index">0{index + 1}</span>
                   <h3>{objective.title}</h3>
                   <p>{objective.body}</p>
@@ -340,7 +340,7 @@ function Index() {
               label="الفئة المستهدفة"
               title="للمهتمين بأسواق الدين"
             />
-            <div className="sl-tags reveal">
+            <div className="sl-tags">
               {[
                 "المالية",
                 "المحاسبة",
@@ -349,7 +349,7 @@ function Index() {
                 "المهتمون بأسواق الدين",
                 "مختلف الجامعات والتخصصات",
               ].map((item) => (
-                <span key={item} className="sl-tag">
+                <span key={item} className="sl-tag reveal">
                   {item}
                 </span>
               ))}
@@ -364,16 +364,16 @@ function Index() {
               title="شركاء الرحلة"
             />
             <div className="sl-logo-grid">
-              <article className="sl-logo-card reveal" style={{ "--sl-reveal-delay": "0ms" } as CSSProperties}>
-                <span>الجهة المنظمة · إثمار</span>
+              <article className="sl-logo-card reveal">
+                <span>الجهة المنظمة</span>
                 <img src="/logos/ethmar.png" alt="شعار إثمار" loading="lazy" />
               </article>
-              <article className="sl-logo-card reveal" style={{ "--sl-reveal-delay": "170ms" } as CSSProperties}>
-                <span>الراعي الرئيسي · Sukuk Capital</span>
+              <article className="sl-logo-card reveal">
+                <span>الراعي الرئيسي</span>
                 <img src="/logos/sukuk-capital.png" alt="شعار Sukuk Capital" loading="lazy" />
               </article>
-              <article className="sl-logo-card reveal" style={{ "--sl-reveal-delay": "340ms" } as CSSProperties}>
-                <span>الشريك المستضيف · الأكاديمية المالية</span>
+              <article className="sl-logo-card reveal">
+                <span>الشريك المستضيف</span>
                 <img src="/logos/financial-academy.png" alt="شعار الأكاديمية المالية" loading="lazy" />
               </article>
             </div>

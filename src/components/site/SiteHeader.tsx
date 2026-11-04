@@ -102,13 +102,22 @@ export function SiteFooter() {
   return (
     <footer className="sl-footer" id="contact">
       <div className="sl-wrap sl-footer__top sl-footer__grid">
-        <div className="sl-footer__identity">
-          <p className="sl-kicker">SUKUK LAB · ITHMAR</p>
-          <h2>صكوك <em>لاب</em></h2>
-          <p>من الصفر إلى الإصدار</p>
-          <p>برنامج تطبيقي مكثف تنظمه مبادرة إثمار المالية بجامعة الملك سعود.</p>
+        <div className="sl-footer__identity reveal">
+          <Link to="/" className="sl-brand sl-footer__brand" aria-label="SUKUK LAB — الصفحة الرئيسية">
+            <span className="sl-brand__mark" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className="sl-footer__brand-name">
+              <strong dir="ltr">SUKUK LAB</strong>
+              <small>صكوك لاب</small>
+            </span>
+          </Link>
+          <p className="sl-footer__slogan">من الصفر إلى الإصدار</p>
+          <p className="sl-footer__byline">مبادرة إثمار المالية · جامعة الملك سعود</p>
         </div>
-        <nav className="sl-footer__links" aria-label="روابط سريعة">
+        <nav className="sl-footer__links reveal" aria-label="روابط سريعة">
           <h3>روابط سريعة</h3>
           <a href="/#about">عن البرنامج</a>
           <a href="/#experience">التجربة</a>
@@ -117,23 +126,23 @@ export function SiteFooter() {
           <a href="/#partners">الشركاء</a>
           <Link to="/register">التسجيل</Link>
         </nav>
-        <div className="sl-footer__right">
+        <div className="sl-footer__right reveal">
           <h3>تواصل معنا</h3>
-          <p>يسعدنا الرد على استفساراتك</p>
+          <p>نسعد بالإجابة عن استفساراتك</p>
           <div className="sl-footer__contact-list">
             <a href={`mailto:${CONTACT_EMAIL}`}>
-              <Mail size={17} />
+              <Mail size={18} />
               <span dir="ltr">{CONTACT_EMAIL}</span>
             </a>
             <a href={`tel:${CONTACT_PHONE.replace(/\s+/g, "")}`}>
-              <Phone size={17} />
+              <Phone size={18} />
               <span dir="ltr">{CONTACT_PHONE}</span>
             </a>
           </div>
         </div>
       </div>
       <div className="sl-wrap sl-footer__bottom">
-        <span>© {new Date().getFullYear()} SUKUK LAB · مبادرة إثمار المالية</span>
+        <span>© {new Date().getFullYear()} SUKUK LAB · إثمار المالية</span>
         <span>من الصفر إلى الإصدار</span>
       </div>
     </footer>

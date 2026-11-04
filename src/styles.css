@@ -1093,135 +1093,128 @@ html.sl-motion .reveal.is-visible {
   .sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover { transform: none; }
 }
 
-/* SUKUK LAB — footer and scroll-motion refinements.
-   Imported by use-reveal.ts; the existing styles.css remains unchanged. */
-
-/* Contact information belongs only in the footer, not in the final CTA. */
-.sl-final-cta .sl-contact-cards { display: none !important; }
-
-/* Reference-inspired three-column footer, retaining SUKUK LAB colors. */
+/* =========================================================
+   SUKUK LAB — final editorial polish
+   Single stylesheet; JS scroll entry never hides content in CSS.
+   ========================================================= */
+/* About: clean text hierarchy, no decorative content boxes. */
+.sl-about { padding-block: clamp(88px, 9vw, 120px) clamp(78px, 8vw, 110px); }
+.sl-about__grid.sl-about__grid--polished {
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  column-gap: clamp(55px, 8vw, 130px);
+  align-items: start;
+}
+.sl-about__lead { position: relative; padding-top: 8px; }
+.sl-about__lead h2 { margin: 22px 0 16px; font-size: clamp(37px, 4vw, 56px); line-height: 1.35; }
+.sl-about__story { padding-top: 16px; }
+.sl-about__story .sl-about__big { margin-top: 0; font-size: clamp(18px, 1.9vw, 23px); line-height: 1.95; font-weight: 500; }
+.sl-about__story > p:not(.sl-about__big) { margin-block: 20px 0; }
+.sl-about__goal {
+  display: grid; grid-template-columns: 70px 1fr; gap: 16px;
+  margin-top: 30px !important; padding: 25px 0 0 !important;
+  background: none !important; border: 0 !important; border-top: 1px solid #cfc6b6 !important;
+  border-radius: 0 !important; box-shadow: none !important;
+  line-height: 1.95;
+}
+.sl-about__goal strong { color: #8d6a25; font-weight: 700; font-size: 15px; }
+.sl-about__goal span { color: #55524c; font-size: 15px; }
+/* Partners: transparent, borderless wordmarks and readable role captions. */
+.sl-partners { padding-block: clamp(72px, 8vw, 110px); }
+.sl-logo-grid { gap: clamp(20px, 4vw, 54px); align-items: center; }
+.sl-logo-card,
+.sl-logo-card:hover {
+  min-height: 160px; padding: 10px 8px !important; gap: 27px;
+  border: none !important; outline: none !important;
+  background: transparent !important; box-shadow: none !important;
+  border-radius: 0 !important;
+}
+.sl-logo-card {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  translate: 0 0 !important; transform: none;
+  transition: opacity .38s ease, transform .55s cubic-bezier(.22,1,.36,1) !important;
+}
+.sl-logo-card:hover { transform: translateY(-5px) !important; }
+.sl-logo-card span {
+  display: block; color: #504127; font-size: clamp(14px, 1.35vw, 17px) !important;
+  font-weight: 700 !important; line-height: 1.65; text-align: center;
+}
+.sl-logo-card img, .sl-logo-card:nth-child(2) img, .sl-logo-card:nth-child(3) img {
+  width: auto !important; height: auto !important;
+  max-width: min(100%, 150px) !important; max-height: 57px !important;
+  object-fit: contain; object-position: center;
+  transition: transform .55s cubic-bezier(.22,1,.36,1), filter .55s ease;
+}
+.sl-logo-card:nth-child(2) img { max-width: 160px !important; }
+.sl-logo-card:nth-child(3) img { max-width: 110px !important; }
+.sl-logo-card:hover img { transform: scale(1.06); }
+/* Card motion: hover is separate from scroll entrance animation. */
+.sl-experience-card, .sl-goals-card {
+  translate: 0 0 !important;
+  transition: transform .55s cubic-bezier(.22,1,.36,1),
+              box-shadow .55s ease, border-color .55s ease, background .55s ease !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sl-experience-card:hover, .sl-goals-card:hover {
+    translate: 0 0 !important;
+    transform: translateY(-8px) scale(1.015) !important;
+    box-shadow: 0 25px 55px #17120b20 !important;
+    border-color: #c9a24a70 !important;
+  }
+  .sl-experience-card:hover .sl-experience-card__art svg { transform: scale(1.12) rotate(-4deg); }
+}
+/* Clean branded footer: graphical logo + one tagline, no large repeated heading. */
 .sl-footer .sl-footer__top.sl-footer__grid {
   display: grid !important;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, .75fr) minmax(0, 1fr) !important;
-  gap: clamp(30px, 5vw, 85px);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr) minmax(0, 1fr) !important;
+  gap: clamp(34px, 6vw, 100px);
   align-items: start;
-  padding-block: 75px 80px;
+  padding-block: 79px 85px;
 }
-.sl-footer__identity h2 { margin: 16px 0 14px; font-size: clamp(32px, 3.2vw, 45px); }
-.sl-footer__identity > p:not(.sl-kicker) { max-width: 360px; margin: 8px 0; color: #bdb7a8; font-size: 14px; line-height: 2; }
-.sl-footer__links { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
+.sl-footer__identity { align-self: start; }
+.sl-footer__brand { display: inline-flex; align-items: center; gap: 17px; width: max-content; }
+.sl-footer__brand .sl-brand__mark { width: 39px; height: 43px; border-bottom-width: 3px; }
+.sl-footer__brand .sl-brand__mark i { width: 7px; height: 18px; }
+.sl-footer__brand .sl-brand__mark i:nth-child(2) { height: 26px; }
+.sl-footer__brand .sl-brand__mark i:nth-child(3) { height: 35px; }
+.sl-footer__brand-name { display: flex; flex-direction: column; gap: 5px; }
+.sl-footer__brand .sl-footer__brand-name strong { font: 700 clamp(23px, 2.4vw, 32px)/1.2 var(--font-latin); letter-spacing: .055em; }
+.sl-footer__brand .sl-footer__brand-name small { font-size: 13px; color: #c6c0b3; }
+.sl-footer__identity .sl-footer__slogan { color: #c9a24a; font-size: 17px; font-weight: 600; margin: 28px 0 9px; }
+.sl-footer__identity .sl-footer__byline { color: #a9a599; line-height: 1.9; font-size: 13px; max-width: 350px; margin: 0; }
+.sl-footer__links { display: flex; align-items: flex-start; flex-direction: column; gap: 13px; }
 .sl-footer__links h3, .sl-footer__right h3 { color: #f6f4ee; font-size: 20px; font-weight: 600; margin: 0 0 13px; }
-.sl-footer__links a { color: #bdb7a8; font-size: 14px; transition: color .25s ease, translate .25s ease; }
+.sl-footer__links a { color: #c4beb1; font-size: 14px; transition: color .3s ease, translate .3s ease; }
 .sl-footer__links a:hover { color: #c9a24a; translate: -4px 0; }
-.sl-footer .sl-footer__right { align-self: start; text-align: start; }
-.sl-footer__right > p { color: #bdb7a8; font-size: 14px; line-height: 1.8; margin: 0 0 22px; }
-.sl-footer__contact-list { gap: 17px; }
-.sl-footer__contact-list a { display: inline-flex; direction: ltr; justify-content: flex-end; gap: 12px; white-space: nowrap; font-family: var(--font-latin); }
+.sl-footer .sl-footer__right { text-align: start; align-self: start; }
+.sl-footer__right > p { color: #b8b2a7; font-size: 14px; line-height: 1.85; margin: 0 0 21px; }
+.sl-footer__contact-list { gap: 16px; }
+.sl-footer__contact-list a { display: inline-flex; flex-direction: row; direction: ltr; align-items: center; justify-content: flex-end; gap: 12px; white-space: nowrap; color: #e8e8e8; font-family: var(--font-latin); }
 .sl-footer__contact-list a svg { flex-shrink: 0; color: #c9a24a; }
-
-/* Visible by default; only hide when the observer has mounted. */
-html.sl-motion .reveal:not(.is-visible) {
-  opacity: 0 !important;
-  transform: translate3d(0, 55px, 0) scale(.985) !important;
-}
-html.sl-motion .reveal.is-visible {
-  opacity: 1 !important;
-  transform: translate3d(0, 0, 0) scale(1) !important;
-}
-html.sl-motion .reveal {
-  transition: opacity .85s cubic-bezier(.22, 1, .36, 1), transform .85s cubic-bezier(.22, 1, .36, 1) !important;
-}
-/* Stagger cards on reveal; preserve hover transforms after entry. */
-html.sl-motion .sl-experience-card.reveal:nth-child(2),
-html.sl-motion .sl-goals-card.reveal:nth-child(3n + 2),
-html.sl-motion .sl-logo-card.reveal:nth-child(2) { transition-delay: 120ms !important; }
-html.sl-motion .sl-experience-card.reveal:nth-child(3),
-html.sl-motion .sl-goals-card.reveal:nth-child(3n),
-html.sl-motion .sl-logo-card.reveal:nth-child(3) { transition-delay: 240ms !important; }
-.sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover { box-shadow: 0 25px 55px #00000020; }
-
-@media (max-width: 850px) {
-  .sl-footer .sl-footer__top.sl-footer__grid { grid-template-columns: 1fr 1fr !important; gap: 40px 24px; }
-  .sl-footer__identity { grid-column: 1 / -1; }
+/* Suppress any legacy duplicate contacts in the CTA. */
+.sl-final-cta .sl-contact-cards { display: none !important; }
+@media (max-width: 920px) {
+  .sl-about__grid.sl-about__grid--polished { grid-template-columns: 1fr; gap: 26px; }
+  .sl-about__story { padding-top: 0; }
+  .sl-footer .sl-footer__top.sl-footer__grid { grid-template-columns: 1fr 1fr !important; gap: 46px 26px; }
+  .sl-footer__identity { grid-column: 1/-1; }
   .sl-footer__contact-list a { white-space: normal; }
 }
-@media (max-width: 540px) {
-  .sl-footer .sl-footer__top.sl-footer__grid { grid-template-columns: 1fr !important; padding-block: 55px 60px; }
+@media (max-width: 600px) {
+  .sl-footer .sl-footer__top.sl-footer__grid { grid-template-columns: 1fr !important; padding-block: 58px 62px; }
   .sl-footer__identity { grid-column: auto; }
   .sl-footer__bottom { gap: 12px; flex-wrap: wrap; }
+  .sl-logo-grid { gap: 26px; }
+  .sl-logo-card { min-height: 122px; padding: 0 !important; gap: 12px; }
+  .sl-about__goal { grid-template-columns: 1fr; gap: 6px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  html.sl-motion .reveal, html.sl-motion .reveal:not(.is-visible), html.sl-motion .reveal.is-visible {
-    opacity: 1 !important; transform: none !important; transition: none !important;
+@media (hover: none) {
+  .sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover {
+    translate: 0 0 !important; transform: none !important;
   }
 }
-
-
-/* FINAL PARTNER AND SCROLL REFINEMENTS — consolidated in styles.css */
-.sl-partners { padding-block: clamp(65px, 8vw, 100px); }
-.sl-logo-grid { gap: 22px; align-items: stretch; }
-.sl-logo-card {
-  min-height: 195px; padding: 26px 22px 23px; gap: 18px;
-  background: transparent !important; border: 1px solid #d7d0c1;
-  box-shadow: none; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  transition: border-color .4s ease, box-shadow .5s ease, translate .5s ease;
-}
-.sl-logo-card span {
-  display: block; text-align: center; font-size: clamp(13px, 1.2vw, 15px);
-  font-weight: 700; line-height: 1.85; color: #534630;
-}
-.sl-logo-card img {
-  display: block; width: auto !important; height: auto !important;
-  max-width: min(100%, 165px) !important; max-height: 67px !important;
-  object-fit: contain; object-position: center;
-}
-.sl-logo-card:nth-child(2) img { max-width: 172px !important; max-height: 70px !important; }
-.sl-logo-card:nth-child(3) img { max-width: 112px !important; max-height: 70px !important; }
-.sl-logo-card:hover { translate: 0 -6px; box-shadow: 0 20px 45px #18120a12; border-color: #c9a24a; }
-/* CSS only hides once the JS observer explicitly enables motion. */
-html.sl-motion .reveal:not(.is-visible) {
-  opacity: 0 !important;
-  transform: translate3d(0, 76px, 0) scale(.955) !important;
-  visibility: visible !important;
-}
-html.sl-motion .reveal.is-visible {
-  opacity: 1 !important;
-  transform: translate3d(0, 0, 0) scale(1) !important;
-  visibility: visible !important;
-}
-html.sl-motion .reveal {
-  transition-property: opacity, transform !important;
-  transition-duration: 1.15s, 1.15s !important;
-  transition-timing-function: cubic-bezier(.22, 1, .36, 1) !important;
-  transition-delay: var(--sl-reveal-delay, 0ms) !important;
-  will-change: opacity, transform;
-}
-/* The transform belongs to reveal during entrance; hover uses translate to avoid conflict. */
-.sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover {
-  translate: 0 -7px;
-  box-shadow: 0 25px 52px #0000001b;
-}
-@media (max-width: 720px) {
-  .sl-logo-card { min-height: 165px; padding: 22px 18px; }
-  .sl-logo-card img { max-height: 62px !important; }
-}
 @media (prefers-reduced-motion: reduce) {
-  html.sl-motion .reveal, html.sl-motion .reveal:not(.is-visible), html.sl-motion .reveal.is-visible {
-    opacity: 1 !important; transform: none !important; transition: none !important;
+  .sl-experience-card, .sl-goals-card, .sl-logo-card,
+  .sl-experience-card:hover, .sl-goals-card:hover, .sl-logo-card:hover {
+    transform: none !important; translate: 0 0 !important; transition: none !important;
   }
-}
-
-/* Safe one-time reveal: only explicitly queued items may be hidden.
-   Never hide all .reveal elements globally. */
-html.sl-motion .reveal:not(.is-visible),
-html.sl-motion .reveal.sl-pending:not(.is-visible) { opacity: 1 !important; transform: none !important; }
-html.sl-motion .reveal.sl-pending:not(.is-visible) {
-  opacity: 0 !important;
-  transform: translate3d(0, 38px, 0) !important;
-}
-html.sl-motion .reveal.is-visible { opacity: 1 !important; transform: none !important; }
-html.sl-motion .reveal { transition-duration: .75s !important; }
-@media (prefers-reduced-motion: reduce) {
- html.sl-motion .reveal.sl-pending:not(.is-visible) { opacity: 1 !important; transform: none !important; }
 }
