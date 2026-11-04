@@ -1145,7 +1145,15 @@ html.sl-motion .reveal.is-visible {
   transition: transform .55s cubic-bezier(.22,1,.36,1), filter .55s ease;
 }
 .sl-logo-card:nth-child(2) img { max-width: 160px !important; }
-.sl-logo-card:nth-child(3) img { max-width: 110px !important; }
+/* The Financial Academy asset has an almost square transparent canvas.
+   A shared 57px image cap makes its actual wordmark appear much smaller. */
+.sl-logo-card:nth-child(3) img {
+  width: 178px !important;
+  height: 178px !important;
+  max-width: min(100%, 178px) !important;
+  max-height: 178px !important;
+  object-fit: contain;
+}
 .sl-logo-card:hover img { transform: scale(1.06); }
 /* Card motion: hover is separate from scroll entrance animation. */
 .sl-experience-card, .sl-goals-card {
