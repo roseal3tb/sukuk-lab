@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** Form matches the supplied original sign-up questions */
+/** Registration fields: confirm all additional questions with the event organizer before launch. */
 export const registrationSchema = z.object({
   full_name: z.string().trim().min(5, "أدخل الاسم الثلاثي").max(120, "الاسم طويل جدًا").refine(v => v.split(/\s+/).length >= 3, "يرجى إدخال الاسم الثلاثي"),
   email: z.string().trim().email("أدخل بريدًا إلكترونيًا صحيحًا").max(255),
