@@ -1359,10 +1359,13 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
 @media (max-width: 600px) {
   .sl-goals-cards { grid-template-columns: 1fr; }
   .sl-orbit--sukuk {
-    left: -205px;
-    top: 53%;
-    width: 485px;
-    opacity: .17 !important;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    width: min(420px, 112vw);
+    opacity: .12 !important;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 48%, transparent 85%);
+    mask-image: radial-gradient(ellipse at center, #000 48%, transparent 85%);
   }
   .sl-case { padding-block: 68px; }
   .sl-case__deliverables li { font-size: 14px; }
