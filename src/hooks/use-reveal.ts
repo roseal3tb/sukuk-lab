@@ -1,22 +1,40 @@
 import { useEffect } from "react";
 
-/** Adds CSS is-visible to editorial sections as they enter the viewport. */
+/**
+ * Progressive enhancement only: content is visible without JS or IntersectionObserver.
+ * Animate once, subtly, as each element enters view; never hide cards while scrolling.
+ */
 export function useReveal() {
   useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
-      nodes.forEach((node) => node.classList.add("is-visible"));
-      return;
-    }
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const items = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const element = entry.target as HTMLElement;
+          if (element.dataset.revealed === "true") continue;
+          element.dataset.revealed = "true";
+          observer.unobserve(element);
+
+          // Both keyframes are clearly visible. No dependency on the animation
+          // completing for the element to be readable/clickable.
+          if (typeof element.animate === "function") {
+            element.animate(
+              [
+                { opacity: 0.94, transform: "translateY(10px)" },
+                { opacity: 1, transform: "translateY(0)" },
+              ],
+              { duration: 490, easing: "cubic-bezier(.22,1,.36,1)", fill: "none" },
+            );
+          }
         }
-      }
-    }, { threshold: 0.12, rootMargin: "0px 0px -20px 0px" });
-    nodes.forEach((node) => observer.observe(node));
+      },
+      { threshold: 0.04, rootMargin: "0px 0px 12% 0px" },
+    );
+    items.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
 }
