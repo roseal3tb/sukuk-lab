@@ -322,7 +322,7 @@ function Index() {
               title="ماذا ستتعلم"
             />
             <div className="sl-goals-cards">
-              {objectives.map((objective) => (
+              {objectives.map((objective, index) => (
                 <article key={objective.title} className="sl-goals-card reveal">
                   <span className="sl-goals-card__index">0{index + 1}</span>
                   <h3>{objective.title}</h3>
