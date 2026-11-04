@@ -31,12 +31,12 @@
  <path d="M235 207C268 207 291 188 310 160C330 188 355 193 377 199C405 190 431 170 450 160C467 188 490 207 519 207" stroke="#C9A24A" stroke-opacity=".57" stroke-width="1.4"/>
  <path d="M235 155H285M475 155H519" stroke="#C9A24A" stroke-opacity=".3"/>
  <rect x="235" y="137" width="285" height="54" fill="url(#grille)" opacity=".12"/>
- <!-- Official Sukuk Lab abstract mark, without any Arabic or English lettering. -->
- <g fill="#C9A24A" aria-hidden="true">
-   <path d="M319 346L346 340L346 259L319 269Z"/>
-   <path d="M360 336L384 330L384 282L360 290Z"/>
-   <path d="M398 326L418 322L418 304L398 309Z"/>
-   <path d="M315 362L426 337L426 349L315 374Z"/>
+ <!-- Sukuk Lab gold-only mark, traced from the supplied logo image. -->
+ <g fill="#C9A24A" aria-hidden="true" transform="translate(315 262) scale(1.78)">
+   <path d="M8 1L17 0L17 51L8 53Z"/>
+   <path d="M24 12L33 11L33 48L24 50Z"/>
+   <path d="M40 24L49 22L49 45L40 47Z"/>
+   <path d="M1 60L55 51L54 57L0 66Z"/>
  </g>
  <path d="M290 375H465" stroke="#D9BA83" stroke-opacity=".5" stroke-width="1"/>
  <path d="M336 404H420M304 428H448M323 451H429" stroke="#C9A24A" stroke-opacity=".27" stroke-width="1.6" stroke-linecap="round"/>
