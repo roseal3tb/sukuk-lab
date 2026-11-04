@@ -1,65 +1,73 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { ArrowUpLeft, Menu, X } from "lucide-react";
 
 const nav = [
-  { href: "/#about", label: "عن البرنامج" },
-  { href: "/#goals", label: "الأهداف" },
-  { href: "/#timeline", label: "الجدول الزمني" },
-  { href: "/#audience", label: "الفئة المستهدفة" },
+  { id: "about", label: "عن البرنامج" },
+  { id: "experience", label: "التجربة" },
+  { id: "timeline", label: "الرحلة" },
+  { id: "goals", label: "الأهداف" },
+  { id: "audience", label: "الفئة المستهدفة" },
 ];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    let ticking = false;
+    function update() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { setScrolled(window.scrollY > 36); ticking = false; });
+    }
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", onEscape);
+    return () => document.removeEventListener("keydown", onEscape);
+  }, [open]);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <Link to="/" className="flex items-baseline gap-3" aria-label="SUKUK LAB — الصفحة الرئيسية">
-          <span className="latin text-xl font-semibold tracking-[0.18em] text-gold">SUKUK LAB</span>
-          <span className="hidden text-sm text-muted-foreground sm:inline">مختبر الصكوك</span>
-        </Link>
-        <nav aria-label="التنقل الرئيسي" className="hidden items-center gap-7 md:flex">
-          {nav.map((n) => (
-            <a key={n.href} href={n.href} className="text-sm text-muted-foreground transition-colors hover:text-gold">
-              {n.label}
-            </a>
-          ))}
-          <Link to="/register" className="rounded-full border border-gold px-5 py-2 text-sm text-gold transition-colors hover:bg-gold hover:text-ink">
-            التسجيل
+    <>
+      <header className={`sl-header ${scrolled ? "is-scrolled" : ""} ${open ? "menu-open" : ""}`}>
+        <div className="sl-header__inner">
+          <Link to="/" className="sl-brand" aria-label="SUKUK LAB — الصفحة الرئيسية">
+            <span className="sl-brand__mark" aria-hidden="true"><i/><i/><i/></span>
+            <span><strong dir="ltr">SUKUK<span>LAB</span></strong><small>مختبر الصكوك</small></span>
           </Link>
+          <nav aria-label="التنقل الرئيسي" className="sl-header__nav">
+            {nav.map((item) => <a key={item.id} href={`/#${item.id}`}>{item.label}</a>)}
+          </nav>
+          <Link to="/register" className="sl-header__cta">سجّل الآن <ArrowUpLeft size={16}/></Link>
+          <button className="sl-menu-toggle" type="button" aria-expanded={open} aria-controls="sl-mobile-menu"
+            aria-label={open ? "إغلاق القائمة" : "فتح القائمة"} onClick={() => setOpen(!open)}>
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+        <nav id="sl-mobile-menu" aria-label="قائمة الهاتف" className={`sl-mobile-menu ${open ? "is-open" : ""}`} aria-hidden={!open}>
+          {nav.map((item, i) => <a key={item.id} href={`/#${item.id}`} onClick={() => setOpen(false)} style={{ animationDelay: `${i * 55}ms` }}>{item.label}</a>)}
+          <Link to="/register" onClick={() => setOpen(false)}>سجّل الآن <ArrowUpLeft size={18}/></Link>
         </nav>
-        <button
-          className="md:hidden text-foreground"
-          aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X /> : <Menu />}
-        </button>
-      </div>
-      {open && (
-        <nav aria-label="التنقل للجوال" className="border-t bg-background px-5 py-4 md:hidden">
-          {[...nav, { href: "/register", label: "التسجيل" }].map((n) => (
-            <a key={n.href} href={n.href} onClick={() => setOpen(false)} className="block py-3 text-foreground">
-              {n.label}
-            </a>
-          ))}
-        </nav>
-      )}
-    </header>
+      </header>
+    </>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="border-t bg-background py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 text-sm text-muted-foreground md:flex-row">
-        <div className="flex items-baseline gap-3">
-          <span className="latin text-lg font-semibold tracking-[0.18em] text-gold">SUKUK LAB</span>
-          <span>مختبر الصكوك</span>
-        </div>
-        <p>تنظيم مبادرة إثمار المالية — جامعة الملك سعود</p>
+    <footer className="sl-footer">
+      <div className="sl-wrap sl-footer__top">
+        <div><p className="sl-kicker">SUKUK LAB · ITHMAR</p><h2>المعرفة تبدأ<br/><em>من هنا.</em></h2></div>
+        <div className="sl-footer__right"><p>مختبر الصكوك — من الصفر إلى الإصدار</p><p>تنظيم مبادرة إثمار المالية<br/>جامعة الملك سعود</p></div>
       </div>
+      <div className="sl-wrap sl-footer__bottom"><span>© SUKUK LAB</span><a href="#main">العودة للأعلى ↑</a></div>
     </footer>
   );
 }

@@ -1,157 +1,139 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, ArrowUpLeft, Check, LoaderCircle } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site/SiteHeader";
 import { useRegistrationStatus } from "@/hooks/use-registration-status";
 import { registrationSchema, translateServerError } from "@/lib/registration";
 import { supabase } from "@/integrations/supabase/client";
+import { PROGRAM_CITY, programDateLabel } from "@/lib/program";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
-      { title: "التسجيل | SUKUK LAB مختبر الصكوك" },
-      { name: "description", content: "صفحة التسجيل في برنامج مختبر الصكوك وحالة استقبال الطلبات." },
-      { property: "og:title", content: "التسجيل | SUKUK LAB مختبر الصكوك" },
-      { property: "og:description", content: "حالة التسجيل ونموذج التقديم في برنامج مختبر الصكوك." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { title: "التسجيل | SUKUK LAB — مختبر الصكوك" },
+      { name: "description", content: "نموذج التسجيل في مختبر الصكوك — برنامج تطبيقي في الصكوك وأدوات الدين." },
+      { name: "robots", content: "index, follow" },
     ],
   }),
   component: RegisterPage,
 });
 
 const fields = [
-  { name: "full_name", label: "الاسم الكامل", type: "text", autoComplete: "name" },
-  { name: "email", label: "البريد الإلكتروني", type: "email", autoComplete: "email", ltr: true },
-  { name: "phone", label: "رقم الجوال", type: "tel", autoComplete: "tel", ltr: true },
-  { name: "university", label: "الجامعة", type: "text", autoComplete: "organization" },
-  { name: "major", label: "التخصص", type: "text", autoComplete: "off" },
+  { name: "full_name", label: "الاسم الكامل", type: "text", autoComplete: "name", placeholder: "اسمك كما تود ظهوره في التسجيل" },
+  { name: "email", label: "البريد الإلكتروني", type: "email", autoComplete: "email", placeholder: "name@example.com", ltr: true },
+  { name: "phone", label: "رقم الجوال", type: "tel", autoComplete: "tel", placeholder: "05XXXXXXXX", ltr: true },
+  { name: "university", label: "الجامعة", type: "text", autoComplete: "organization", placeholder: "اسم الجامعة" },
+  { name: "major", label: "التخصص", type: "text", autoComplete: "off", placeholder: "التخصص الدراسي" },
 ] as const;
 
 function RegisterPage() {
   const status = useRegistrationStatus();
   const qc = useQueryClient();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitting, setSubmitting] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [result, setResult] = useState<"pending" | "waitlisted" | null>(null);
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (busy) return;
     setServerError(null);
-    const fd = new FormData(e.currentTarget);
-    const parsed = registrationSchema.safeParse({
+    const fd = new FormData(event.currentTarget);
+    const form = registrationSchema.safeParse({
       full_name: fd.get("full_name"),
       email: fd.get("email"),
-      phone: String(fd.get("phone") ?? "").replace(/[\s-]/g, ""),
+      phone: String(fd.get("phone") ?? "").replace(/[\s()\-]/g, ""),
       university: fd.get("university"),
       major: fd.get("major"),
       consent: fd.get("consent") === "on",
     });
-    if (!parsed.success) {
-      const errs: Record<string, string> = {};
-      parsed.error.issues.forEach((i) => (errs[String(i.path[0])] ??= i.message));
-      setErrors(errs);
+    if (!form.success) {
+      const found: Record<string, string> = {};
+      form.error.issues.forEach((issue) => { const key = String(issue.path[0]); if (!found[key]) found[key] = issue.message; });
+      setErrors(found);
+      window.requestAnimationFrame(() => document.querySelector<HTMLElement>("[aria-invalid='true']")?.focus());
       return;
     }
     setErrors({});
-    setSubmitting(true);
-    const v = parsed.data;
-    const { data, error } = await supabase.rpc("submit_application", {
-      _full_name: v.full_name,
-      _email: v.email,
-      _phone: v.phone,
-      _university: v.university,
-      _major: v.major,
-      _consent: v.consent,
-    });
-    setSubmitting(false);
-    if (error) {
-      setServerError(translateServerError(error.message));
-      qc.invalidateQueries({ queryKey: ["registration-status"] });
-      return;
-    }
-    setResult(data === "waitlisted" ? "waitlisted" : "pending");
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("submit_application", {
+        _full_name: form.data.full_name,
+        _email: form.data.email,
+        _phone: form.data.phone,
+        _university: form.data.university,
+        _major: form.data.major,
+        _consent: form.data.consent,
+      });
+      if (error) {
+        setServerError(translateServerError(error.message));
+        qc.invalidateQueries({ queryKey: ["registration-status"] });
+        return;
+      }
+      // Server RPC returns exactly 'pending' or 'waitlisted'; no optimistic success.
+      if (data === "pending" || data === "waitlisted") setResult(data);
+      else setServerError("لم نتمكن من التحقق من حفظ طلبك. تواصل مع الجهة المنظمة قبل إعادة المحاولة.");
+    } catch {
+      setServerError("تعذّر الاتصال بنظام التسجيل. تحقق من الاتصال ثم حاول مرة أخرى.");
+    } finally { setBusy(false); }
   }
 
-  return (
-    <>
-      <SiteHeader />
-      <main id="main" className="section-ivory min-h-screen pt-32 pb-24">
-        <div className="mx-auto max-w-xl px-5">
-          <p className="eyebrow mb-3">التسجيل</p>
-          <h1 className="text-3xl font-bold md:text-4xl">التسجيل في مختبر الصكوك</h1>
-          <div className="mt-6 mb-10 h-px w-20 bg-gold" />
-
-          {status.isLoading && <p role="status">جارٍ التحقق من حالة التسجيل…</p>}
-
-          {status.isError && (
-            <p role="alert" className="rounded-lg border border-destructive p-5">
-              تعذّر التحقق من حالة التسجيل حاليًا. حاول لاحقًا.
-            </p>
-          )}
-
-          {status.data && !status.data.is_open && !result && (
-            <div role="status" className="rounded-lg bg-ink p-8 text-silver">
-              <h2 className="text-2xl font-bold text-gold">التسجيل غير متاح حاليًا</h2>
-              <p className="mt-4 leading-relaxed">
-                أُقيمت النسخة الموثقة من البرنامج في 25–27 أكتوبر 2026، ولا يُستقبل أي طلب جديد في الوقت الحالي. سيُفتح التسجيل عند تأكيد موعد نسخة جديدة.
-              </p>
-              <Link to="/" className="mt-6 inline-block text-gold underline underline-offset-4">العودة إلى الصفحة الرئيسية</Link>
-            </div>
-          )}
-
-          {result && (
-            <div role="status" className="rounded-lg border border-gold bg-card p-8 text-card-foreground">
-              <h2 className="text-2xl font-bold text-gold">تم استلام طلبك</h2>
-              <p className="mt-4 leading-relaxed">
-                {result === "waitlisted"
-                  ? "حُفظ طلبك وأُضيف إلى قائمة الانتظار لاكتمال العدد المستهدف."
-                  : "حُفظ طلبك بنجاح وهو الآن قيد المراجعة."}
-              </p>
-            </div>
-          )}
-
-          {status.data?.is_open && !result && (
-            <form onSubmit={onSubmit} noValidate className="space-y-6">
-              {status.data.full && (
-                <p className="rounded-lg border border-gold/50 p-4 text-sm">
-                  اكتمل العدد المستهدف؛ سيُضاف طلبك إلى قائمة الانتظار.
-                </p>
-              )}
-              {fields.map((f) => (
-                <div key={f.name}>
-                  <label htmlFor={f.name} className="mb-2 block text-sm font-semibold">{f.label}</label>
-                  <input
-                    id={f.name}
-                    name={f.name}
-                    type={f.type}
-                    autoComplete={f.autoComplete}
-                    dir={"ltr" in f ? "ltr" : undefined}
-                    required
-                    aria-invalid={!!errors[f.name]}
-                    aria-describedby={errors[f.name] ? `${f.name}-err` : undefined}
-                    className="w-full rounded-md border border-ink/20 bg-ivory px-4 py-3 text-ink outline-none focus:border-gold"
-                  />
-                  {errors[f.name] && <p id={`${f.name}-err`} className="mt-1 text-sm text-destructive">{errors[f.name]}</p>}
-                </div>
-              ))}
-              <div>
-                <label className="flex items-start gap-3 text-sm leading-relaxed">
-                  <input type="checkbox" name="consent" className="mt-1 h-4 w-4 accent-gold" aria-invalid={!!errors.consent} />
-                  <span>أوافق على استخدام بياناتي لأغراض التسجيل في البرنامج.</span>
-                </label>
-                {errors.consent && <p className="mt-1 text-sm text-destructive">{errors.consent}</p>}
-              </div>
-              {serverError && <p role="alert" className="rounded-md border border-destructive p-3 text-sm text-destructive">{serverError}</p>}
-              <button type="submit" disabled={submitting} className="w-full rounded-full bg-ink py-3 font-semibold text-gold disabled:opacity-60">
-                {submitting ? "جارٍ الإرسال…" : "إرسال الطلب"}
-              </button>
-            </form>
-          )}
-        </div>
-      </main>
-      <SiteFooter />
-    </>
-  );
+  return <>
+    <SiteHeader />
+    <main className="sl-registration" id="main">
+      <div className="sl-wrap sl-registration__layout">
+        <aside className="sl-registration__aside">
+          <p className="sl-kicker"><span className="sl-kicker__dash"/>الانضمام إلى مختبر الصكوك</p>
+          <h1>الخطوة<br/><em>تبدأ هنا.</em></h1>
+          <p>من الصفر إلى الإصدار — ثلاثة أيام من الجلسات الحوارية والورش التطبيقية ودراسة الحالة.</p>
+          <dl className="sl-registration__facts">
+            <div><dt>البرنامج</dt><dd>مختبر الصكوك</dd></div>
+            <div><dt>الموعد</dt><dd>{programDateLabel}</dd></div>
+            <div><dt>المدينة</dt><dd>{PROGRAM_CITY}</dd></div>
+            <div><dt>المدة</dt><dd>3 أيام متتالية</dd></div>
+          </dl>
+          <Link to="/" className="sl-text-link" style={{color:"#73603B",marginTop:25}}>العودة إلى البرنامج <ArrowLeft size={17}/></Link>
+        </aside>
+        <section className="sl-registration__panel" aria-labelledby="registration-title">
+          <div className="sl-registration__panel-head"><h2 id="registration-title">استمارة التسجيل</h2><span>APPLICATION / 01</span></div>
+          {status.isLoading && <div role="status" className="sl-registration__alert"><p>جارٍ التحقق من حالة استقبال الطلبات…</p></div>}
+          {status.isError && <div role="alert" className="sl-registration__alert sl-registration__alert--error"><h3>تعذر التحقق من حالة التسجيل</h3><p>لا يمكن إرسال البيانات قبل التأكد من حالة التسجيل. حاول تحديث الصفحة لاحقًا.</p></div>}
+          {status.data && !status.data.is_open && !result && <div role="status" className="sl-registration__alert">
+            <h3>التسجيل غير متاح حاليًا</h3>
+            <p>لم يُفعّل استقبال الطلبات في قاعدة البيانات بعد. يرجى العودة لاحقًا.</p>
+          </div>}
+          {result && <div role="status" className="sl-registration__alert">
+            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}><Check size={28}/><h3 style={{margin:0}}>تم استلام طلبك بنجاح</h3></div>
+            <p>{result === "waitlisted" ? "حُفظ طلبك في قائمة الانتظار بعد اكتمال العدد المستهدف." : "حُفظ طلبك، وحالته الآن قيد المراجعة."}</p>
+            <Link to="/" style={{display:"inline-block",color:"#755A25",marginTop:22,fontWeight:600}}>العودة إلى الصفحة الرئيسية ←</Link>
+          </div>}
+          {status.data?.is_open && !result && <form onSubmit={submit} noValidate>
+            {status.data.full && <p className="sl-registration__alert" style={{marginBottom:28}} role="status">
+              {status.data.waitlist_enabled ? "اكتمل العدد المستهدف؛ تُحفظ الطلبات الجديدة في قائمة الانتظار." : "اكتمل العدد المتاح. لا يمكن استقبال طلبات جديدة حاليًا."}
+            </p>}
+            {fields.map((field, index) => <div key={field.name} className="sl-registration__field" style={{animation:`sl-fade-up .5s ${index * 45}ms both`}}>
+              <label htmlFor={field.name}>{field.label} <span aria-hidden="true" style={{color:"#A58038"}}>*</span></label>
+              <input id={field.name} name={field.name} type={field.type} autoComplete={field.autoComplete}
+                placeholder={field.placeholder} dir={"ltr" in field ? "ltr" : undefined}
+                aria-invalid={!!errors[field.name]} aria-describedby={errors[field.name] ? `${field.name}-err` : undefined} required />
+              {errors[field.name] && <small id={`${field.name}-err`} role="alert">{errors[field.name]}</small>}
+            </div>)}
+            <label className="sl-registration__consent">
+              <input type="checkbox" name="consent" aria-invalid={!!errors.consent} aria-describedby={errors.consent ? "consent-err" : undefined}/>
+              <span>أوافق على استخدام بياناتي لأغراض تسجيل ومتابعة طلب الانضمام إلى البرنامج.</span>
+            </label>
+            {errors.consent && <p id="consent-err" role="alert" style={{color:"#A44838",fontSize:12,marginTop:-17,marginBottom:20}}>{errors.consent}</p>}
+            {serverError && <p role="alert" className="sl-registration__alert sl-registration__alert--error" style={{marginBottom:22}}>{serverError}</p>}
+            <button className="sl-registration__submit" type="submit" disabled={busy || (status.data.full && !status.data.waitlist_enabled)}>
+              <span>{busy ? "جارٍ حفظ الطلب…" : status.data.full ? "التسجيل في قائمة الانتظار" : "إرسال الطلب"}</span>
+              {busy ? <LoaderCircle size={18} className="animate-spin"/> : <ArrowUpLeft size={20}/>}
+            </button>
+            <p style={{fontSize:11,color:"#817B70",lineHeight:1.8,marginTop:16}}>إرسال الطلب لا يعني القبول النهائي؛ يُراجَع الطلب من الجهة المنظمة.</p>
+          </form>}
+        </section>
+      </div>
+    </main>
+    <SiteFooter />
+  </>;
 }
