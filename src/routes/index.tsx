@@ -6,6 +6,7 @@ import { useRegistrationStatus } from "@/hooks/use-registration-status";
 import { useReveal } from "@/hooks/use-reveal";
 import {
   experiences,
+  faqItems,
   outcomes,
   firstProgramDay,
   objectives,
@@ -392,6 +393,30 @@ function Index() {
                 <span>الشريك المستضيف</span>
                 <img src="/logos/financial-academy.png" alt="شعار الأكاديمية المالية" loading="lazy" />
               </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="sl-faq sl-ivory" id="faq" aria-labelledby="faq-title">
+          <div className="sl-wrap sl-faq__layout">
+            <div className="sl-faq__intro reveal">
+              <p className="sl-kicker"><span className="sl-kicker__dash" />قبل البداية</p>
+              <h2 id="faq-title">الأسئلة الشائعة</h2>
+              <p>كل ما تحتاج معرفته عن تجربة مختبر الصكوك.</p>
+            </div>
+            <div className="sl-faq__items">
+              {faqItems.map((item, index) => (
+                <details className="sl-faq__item reveal" key={item.question}>
+                  <summary>
+                    <span className="sl-faq__number" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="sl-faq__question">{item.question}</span>
+                    <span className="sl-faq__toggle" aria-hidden="true">+</span>
+                  </summary>
+                  <div className="sl-faq__answer"><p>{item.answer}</p></div>
+                </details>
+              ))}
             </div>
           </div>
         </section>
