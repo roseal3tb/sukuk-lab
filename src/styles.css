@@ -1495,3 +1495,69 @@ html.sl-reveal-ready .reveal.sl-pending:not(.is-visible) {
     max-height: 142px !important;
   }
 }
+
+/* Hero illustration only: pointer-aware 3D depth without moving copy or CTAs. */
+.sl-orbit--sukuk {
+  perspective: 1050px;
+}
+
+.sl-hero-tilt {
+  --sl-hero-rotate-x: 0deg;
+  --sl-hero-rotate-y: 0deg;
+  --sl-hero-shift-x: 0px;
+  --sl-hero-shift-y: 0px;
+  --sl-hero-light-x: 50%;
+  --sl-hero-light-y: 50%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: translate3d(var(--sl-hero-shift-x), var(--sl-hero-shift-y), 0)
+    rotateX(var(--sl-hero-rotate-x)) rotateY(var(--sl-hero-rotate-y));
+  transition: transform 380ms cubic-bezier(.22, 1, .36, 1);
+  backface-visibility: hidden;
+}
+
+.sl-hero-tilt.is-interacting {
+  will-change: transform;
+}
+
+.sl-hero-tilt__art {
+  display: block;
+  transform: translateZ(0);
+  transition: transform 380ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.sl-hero-tilt.is-interacting .sl-hero-tilt__art {
+  transform: translateZ(26px);
+}
+
+.sl-hero-tilt::after {
+  content: "";
+  position: absolute;
+  inset: 12% 17%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--sl-hero-light-x) var(--sl-hero-light-y),
+    rgba(245, 216, 154, .16),
+    transparent 47%
+  );
+  mix-blend-mode: screen;
+  transform: translateZ(36px);
+  opacity: 0;
+  transition: opacity 380ms ease;
+}
+
+.sl-hero-tilt.is-interacting::after {
+  opacity: 1;
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .sl-hero-tilt,
+  .sl-hero-tilt__art {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .sl-hero-tilt::after {
+    display: none;
+  }
+}
