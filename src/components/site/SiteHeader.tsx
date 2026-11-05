@@ -9,6 +9,7 @@ const nav = [
   { id: "goals", label: "الأهداف" },
   { id: "outcomes", label: "المخرجات" },
   { id: "audience", label: "الفئة المستهدفة" },
+  { id: "faq", label: "الأسئلة الشائعة" },
 ];
 
 export function SiteHeader() {
@@ -125,6 +126,7 @@ export function SiteFooter() {
           <a href="/#outcomes">المخرجات</a>
           <a href="/#audience">الفئة المستهدفة</a>
           <a href="/#partners">الشركاء</a>
+          <a href="/#faq">الأسئلة الشائعة</a>
           <Link to="/register">التسجيل</Link>
         </nav>
         <div className="sl-footer__right reveal">
