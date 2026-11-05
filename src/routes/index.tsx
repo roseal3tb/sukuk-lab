@@ -59,18 +59,79 @@ function ScrollProgress() {
 }
 
 function HeroGraphic() {
-  // Deliberately replace only the former orbit drawing; all existing hero copy
-  // and CTA positioning stay the same.
+  const tiltRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const tilt = tiltRef.current;
+    // Track the hero area so the decorative art never blocks the CTA links.
+    const hero = tilt?.closest<HTMLElement>(".sl-hero");
+    if (!tilt || !hero || !window.matchMedia) return;
+
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+
+    const reset = () => {
+      window.cancelAnimationFrame(frame);
+      tilt.style.setProperty("--sl-hero-rotate-x", "0deg");
+      tilt.style.setProperty("--sl-hero-rotate-y", "0deg");
+      tilt.style.setProperty("--sl-hero-shift-x", "0px");
+      tilt.style.setProperty("--sl-hero-shift-y", "0px");
+      tilt.style.setProperty("--sl-hero-light-x", "50%");
+      tilt.style.setProperty("--sl-hero-light-y", "50%");
+      tilt.classList.remove("is-interacting");
+    };
+
+    const move = (event: PointerEvent) => {
+      if (!finePointer.matches || reducedMotion.matches) return;
+
+      const rect = hero.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const x = Math.max(-1, Math.min(1, (2 * (event.clientX - rect.left)) / rect.width - 1));
+      const y = Math.max(-1, Math.min(1, (2 * (event.clientY - rect.top)) / rect.height - 1));
+
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        tilt.style.setProperty("--sl-hero-rotate-x", `${(-y * 7).toFixed(2)}deg`);
+        tilt.style.setProperty("--sl-hero-rotate-y", `${(x * 8).toFixed(2)}deg`);
+        tilt.style.setProperty("--sl-hero-shift-x", `${(x * 7).toFixed(2)}px`);
+        tilt.style.setProperty("--sl-hero-shift-y", `${(y * 5).toFixed(2)}px`);
+        tilt.style.setProperty("--sl-hero-light-x", `${((x + 1) * 50).toFixed(1)}%`);
+        tilt.style.setProperty("--sl-hero-light-y", `${((y + 1) * 50).toFixed(1)}%`);
+        tilt.classList.add("is-interacting");
+      });
+    };
+
+    hero.addEventListener("pointermove", move, { passive: true });
+    hero.addEventListener("pointerleave", reset);
+    window.addEventListener("blur", reset);
+    finePointer.addEventListener("change", reset);
+    reducedMotion.addEventListener("change", reset);
+
+    return () => {
+      reset();
+      hero.removeEventListener("pointermove", move);
+      hero.removeEventListener("pointerleave", reset);
+      window.removeEventListener("blur", reset);
+      finePointer.removeEventListener("change", reset);
+      reducedMotion.removeEventListener("change", reset);
+    };
+  }, []);
+
   return (
     <div className="sl-orbit sl-orbit--sukuk" aria-hidden="true">
-      <img
-        src="/hero/sukuk-certificate.svg"
-        alt=""
-        width={760}
-        height={700}
-        fetchPriority="high"
-        decoding="async"
-      />
+      <div className="sl-hero-tilt" ref={tiltRef}>
+        <div className="sl-hero-tilt__art">
+          <img
+            src="/hero/sukuk-certificate.svg"
+            alt=""
+            width={760}
+            height={700}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
+      </div>
     </div>
   );
 }
